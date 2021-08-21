@@ -1,0 +1,6 @@
+node_modules
+client/node_modules
+client/node_modules
+mongodb
+client/yarn.lock
+config/default.json
