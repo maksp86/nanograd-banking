@@ -29,11 +29,12 @@ async function start() {
         await mongoose.connect(config.get('mongoUri'), {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            useCreateIndex: true
+            useCreateIndex: true,
         })
         app.listen(PORT, () => console.log(`Started at ${PORT}`));
+
         const timer = setInterval(clearTokens, 60000);
-        clearTokens()
+
     } catch (error) {
         console.log("Server err", error.message);
         process.exit(1);

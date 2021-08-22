@@ -1,6 +1,7 @@
 node_modules
 client/node_modules
 client/node_modules
-mongodb
 client/yarn.lock
+client/build
+mongodb
 config/default.json
