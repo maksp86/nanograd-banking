@@ -28,7 +28,7 @@ router.post(
             const findedUser = await User.findOne({ userid: userid })
 
             if (!findedUser) {
-                return res.status(400).json({ message: 'Пользователь не существует', errcod: 'user-not-exist' })
+                return res.status(400).json({ errors: [{ msg: 'Пользователь не существует', param: 'userid' }], errcod: 'user-not-exist' })
             }
 
             const isMatch = await bcrypt.compare(password, findedUser.password);

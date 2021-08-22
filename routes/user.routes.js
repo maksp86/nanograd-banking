@@ -1,9 +1,12 @@
 const { Route, Router } = require('express')
 const { check, validationResult } = require('express-validator')
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 const config = require('config')
 const router = Router()
+
 const User = require('../models/User')
+const funcs = require('../funcs')
 
 // /api/user/register
 router.post(
@@ -26,18 +29,50 @@ router.post(
 
             const { name, surname, patronymic } = req.body
 
-            const needRegister = await User.findOne({ name: name, surname: surname, patronymic: patronymic })
-
-            if (needRegister) {
-                return res.status(400).json({ message: 'Пользователь существует' })
-            }
-
             const pass = funcs.makePassword();
             const userid = funcs.getRandomInt(10000000, 99999999)
 
             const hashedPass = await bcrypt.hash(pass, config.get('hashSalt'))
 
             const userParams = { name: name, surname: surname, patronymic: patronymic, password: hashedPass, userid: userid, accesslevel: 0 }
+
+            if (!await User.findOne()) {
+                userParams.accesslevel = 10;
+                console.log("no users")
+            }
+            else {
+                if (req.body.token && req.body.token.length > 0) {
+                    const token = req.body.token;
+
+                    const decoded = jwt.verify(
+                        token,
+                        config.get('jwtSecret'),
+                    );
+
+                    if (decoded) {
+                        const requestingUser = await User.findOne({ userid: decoded.userid })
+
+                        if (!requestingUser) {
+                            //WTF
+                            return res.status(400).json({ message: 'Запрашивающий пользователь не существует', errcod: 'req-sender-user-not-exist' })
+                        }
+
+                        if (requestingUser.accesslevel < 4)
+                            return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
+
+                        const userExists = await User.findOne({ name: name, surname: surname, patronymic: patronymic })
+                        if (userExists) {
+                            return res.status(400).json({ message: 'Пользователь существует' })
+                        }
+
+                    }
+                    else {
+                        return res.status(400).json({ message: 'Неверный токен', errcod: 'inv-token' })
+                    }
+                }
+                else
+                    return res.status(400).json({ errors: [{ msg: 'Неверно заполнено поле', param: 'token' }] })
+            }
 
             const user = new User(userParams)
 
@@ -48,7 +83,7 @@ router.post(
             res.status(201).json({ message: 'Пользователь добавлен', user: userParams });
 
         } catch (error) {
-            if (e.name === 'TokenExpiredError') {
+            if (error.name === 'TokenExpiredError') {
                 res.status(400).json({ message: 'Срок действия токена истек', errcod: 'token-expired' })
             }
             else
