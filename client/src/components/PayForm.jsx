@@ -12,7 +12,7 @@ import Modal from 'react-bootstrap/Modal'
 import FormControl from 'react-bootstrap/FormControl'
 import Form from 'react-bootstrap/Form'
 import InputGroup from 'react-bootstrap/InputGroup'
-import Reader from '../components/Reader'
+import Reader from './Reader'
 import { X } from 'react-bootstrap-icons'
 
 export default function PayForm(props) {
