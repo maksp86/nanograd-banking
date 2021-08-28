@@ -79,7 +79,7 @@ router.post(
                         await targetUser.save()
                     }
                     else
-                        return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-money' })
+                        return res.status(400).json({ message: 'Недостаточно средств', errcod: 'no-money' })
                 }
                 else
                     return res.status(400).json({ message: 'Невозможно списать деньги с чужого счёта' })
@@ -193,6 +193,7 @@ router.post(
 
             let searchParams = [{ sender: decoded.userid }, { target: decoded.userid }]
 
+
             if (requestingUser.accesslevel >= 4) {
                 if (typeof req.body.showAll === 'boolean' && req.body.showAll === true) {
                     searchParams = [{}]
@@ -201,6 +202,26 @@ router.post(
                     if (req.body.userid && typeof req.body.userid === 'string') {
                         searchParams = [{ sender: req.body.userid }, { target: req.body.userid }]
                     }
+            }
+            else {
+                if (requestingUser.accesslevel === 2) {
+                    if (typeof req.body.showAll === 'boolean' && req.body.showAll === true) {
+                        searchParams = [{ sender: decoded.userid }, { target: decoded.userid }, { type: 3 }, { type: 31 }]
+                    }
+                    else
+                        if (req.body.userid && typeof req.body.userid === 'string') {
+                            searchParams = [{ sender: req.body.userid, target: "shop" }, { target: req.body.userid, sender: "shop" }]
+                        }
+                }
+                if (requestingUser.accesslevel === 3) {
+                    if (typeof req.body.showAll === 'boolean' && req.body.showAll === true) {
+                        searchParams = [{ sender: decoded.userid }, { target: decoded.userid }, { type: 2 }, { type: 21 }]
+                    }
+                    else
+                        if (req.body.userid && typeof req.body.userid === 'string') {
+                            searchParams = [{ sender: req.body.userid, target: "bank" }, { target: req.body.userid, sender: "bank" }]
+                        }
+                }
             }
             console.log(searchParams)
             const finded = await Transaction.find().or(searchParams)
@@ -245,8 +266,11 @@ router.post(
             if (!transaction)
                 return res.status(400).json({ errors: [{ msg: 'Транзакция не существует', param: 'transaction' }] })
 
-            if ((transaction.target != requestingUser.userid && transaction.sender != requestingUser.userid) && requestingUser.accesslevel < 4)
-                return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
+            if (!((transaction.type == 3 || transaction.type == 31) && requestingUser.accesslevel === 2) &&
+                !((transaction.type == 2 || transaction.type == 21) && requestingUser.accesslevel === 3))
+                if ((transaction.target != requestingUser.userid && transaction.sender != requestingUser.userid) &&
+                    requestingUser.accesslevel < 4)
+                    return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
 
             res.status(200).json({ transaction })
         }

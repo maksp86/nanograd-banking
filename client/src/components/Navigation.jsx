@@ -70,7 +70,7 @@ export default function Navigation(props) {
                         </NavButton>
                     )}
 
-                {(currUser && (currUser.accesslevel === 3 || currUser.accesslevel === 10)) &&
+                {(currUser && (currUser.accesslevel === 4 || currUser.accesslevel === 10)) &&
                     (
                         <NavButton className={ isDesktop && "big"} path="/users" text="Пользователи">
                             <People size={30} />
