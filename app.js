@@ -26,12 +26,15 @@ async function clearTokens(params) {
 
 async function start() {
     try {
+        console.log(`Mongodb connecting...`)
         await mongoose.connect(config.get('mongoUri'), {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useCreateIndex: true,
         })
-        app.listen(PORT, () => console.log(`Started at ${PORT}`));
+        console.info(`Mongodb connected`)
+
+        app.listen(PORT, () => console.info(`Started at ${PORT}`));
 
         const timer = setInterval(clearTokens, 60000);
 

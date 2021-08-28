@@ -9,7 +9,6 @@ import Col from 'react-bootstrap/Col'
 import Image from 'react-bootstrap/Image'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import FormControl from 'react-bootstrap/FormControl'
 import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import Spinner from 'react-bootstrap/Spinner'
 
@@ -21,6 +20,7 @@ import '../static/css/AuthPage.css'
 import { useHttp } from '../hooks/http.hook'
 import { AuthContext } from '../context/AuthContext'
 import { getTimeGreeting } from '../helpers/funcs'
+import Switch from '../components/Switch'
 
 export const AuthPage = () => {
     const { loading, error, request, clearError } = useHttp()
@@ -122,7 +122,7 @@ export const AuthPage = () => {
         )
     }
 
-    function PasswordField() {
+    function PasswordField(props) {
         return (
             <>
                 <Row>
@@ -147,14 +147,15 @@ export const AuthPage = () => {
                 </Row>
                 <Row className="justify-content-end">
                     <Col xs={{ offset: 4 }}>
-                        <Form.Check
+                        <Switch text="показать пароль" className="mx-2" checked={showPassword} onChange={(e) => setShowPassword(e)} />
+                        {/* <Form.Check
                             type="switch"
                             id="show-pass-switch"
                             label="показать пароль"
                             className="font-normal unselectable mx-2"
                             checked={showPassword}
                             onChange={(e) => setShowPassword(e.target.checked)}
-                        />
+                        /> */}
                     </Col>
                 </Row>
             </>
@@ -267,7 +268,7 @@ export const AuthPage = () => {
                     </Col>
                 </Row>
 
-                {PasswordField()}
+                {PasswordField() }
 
                 <LoginButtonRow />
             </>
@@ -310,7 +311,7 @@ export const AuthPage = () => {
             <>
                 <Container
                     fluid="sm"
-                    className="animheight p-1"
+                    className="p-1"
                     style={
                         {
                             backgroundColor: 'white',

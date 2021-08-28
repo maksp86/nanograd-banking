@@ -113,6 +113,10 @@ router.post(
 
                                 if (findedToken && findedToken.expiryDate > new Date()) {
                                     await findedToken.remove();
+                                    console.log("findedToken.userid", findedToken.userid)
+                                    if (findedToken.userid != (type === 31 ? targetUser : senderUser).userid)
+                                        return res.status(400).json({ message: 'Чужой платежный токен', errcod: 'stolen-paytoken' })
+
                                     if (type == 31) {
                                         targetUser.balance += amount;
                                         await targetUser.save();
@@ -123,7 +127,7 @@ router.post(
                                             await senderUser.save();
                                         }
                                         else
-                                            return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-money' })
+                                            return res.status(400).json({ message: 'Недостаточно средств', errcod: 'no-money' })
                                     }
                                 }
                                 else
@@ -203,6 +207,52 @@ router.post(
             }
             else
                 res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
+        }
+    }
+)
+
+router.post(
+    '/gettransact',
+    [
+        check('token', 'Неверно заполнено поле').isString().isLength({ min: 1 }),
+        check('id', 'Неверно заполнено поле').isString().isLength({ min: 24, max: 24 }),
+    ],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req)
+
+            if (!errors.isEmpty()) {
+                return res.status(300).json({ message: 'Проверка завершилась с ошибками', errcod: 'valid-err', errors: errors.array() })
+            }
+
+            const { token, id } = req.body
+
+            const decoded = jwt.verify(
+                token,
+                config.get('jwtSecret'),
+            );
+
+            const requestingUser = await User.findOne({ userid: decoded.userid })
+            if (!requestingUser)
+                return res.status(400).json({ message: 'Запрашивающий пользователь не существует', errcod: 'req-sender-user-not-exist' })
+
+            const transaction = await Transaction.findOne({ _id: id })
+            if (!transaction)
+                return res.status(400).json({ errors: [{ msg: 'Транзакция не существует', param: 'transaction' }] })
+
+            if (transaction.sender != requestingUser.userid && requestingUser.accesslevel < 4)
+                return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
+
+            res.status(200).json({ transaction })
+        }
+        catch (e) {
+            if (e.name === 'TokenExpiredError') {
+                res.status(400).json({ message: 'Срок действия токена истек', errcod: 'token-expired' })
+            }
+            else {
+                console.log("err", e);
+                res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
+            }
         }
     }
 )

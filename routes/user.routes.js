@@ -39,6 +39,9 @@ router.post(
             if (!await User.findOne()) {
                 userParams.accesslevel = 10;
                 console.log("no users")
+
+                new User({ name: "Магазин", surname: "", patronymic: "", password: "", userid: "shop", accesslevel: 0 }).save()
+                new User({ name: "Банк", surname: "", patronymic: "", password: "", userid: "bank", accesslevel: 0 }).save()
             }
             else {
                 if (req.body.token && req.body.token.length > 0) {
@@ -91,6 +94,170 @@ router.post(
             console.log('ERR', error);
         }
     });
+
+// /api/user/edit
+router.post(
+    '/edit',
+    [
+        check('token', 'Неверно заполнено поле').isString().isLength({ min: 1 }),
+        check('password', 'Неверно заполнено поле').isString().isLength({ min: 1 }),
+    ],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req)
+
+            if (!errors.isEmpty()) {
+                return res.status(300).json({ message: 'Проверка завершилась с ошибками', errcod: 'valid-err', errors: errors.array() })
+            }
+
+            const { token, password } = req.body
+
+            const decoded = jwt.verify(
+                token,
+                config.get('jwtSecret'),
+            );
+
+            if (!decoded)
+                return res.status(400).json({ message: 'Неверный токен', errcod: 'inv-token' })
+
+            let userToEdit;
+
+            const requestingUser = await User.findOne({ userid: decoded.userid })
+            if (!requestingUser) {
+                return res.status(400).json({ message: 'Запрашивающий пользователь не существует', errcod: 'req-sender-user-not-exist' })
+            }
+            userToEdit = requestingUser;
+
+            if (req.body.userid)
+                if (req.body.token.userid == 8) {
+                    if (requestingUser.accesslevel < 4)
+                        return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
+
+                    const requestedUser = await User.findOne({ userid: req.body.userid })
+
+                    if (!requestedUser) {
+                        return res.status(400).json({ message: 'Запрашиваемый пользователь не существует', errcod: 'req-user-not-exist' })
+                    }
+                    userToEdit = requestedUser;
+                }
+                else
+                    return res.status(400).json({ errors: [{ msg: 'Неверно заполнено поле', param: 'userid' }] })
+
+            userToEdit.password = await bcrypt.hash(password, config.get('hashSalt'))
+
+            await userToEdit.save()
+
+            return res.status(200).json({ message: "Пароль успешно изменен" });
+        }
+        catch (e) {
+            if (e.name === 'TokenExpiredError') {
+                res.status(400).json({ message: 'Срок действия токена истек', errcod: 'token-expired' })
+            }
+            else
+                res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
+        }
+    }
+);
+
+// /api/user/delete
+router.post(
+    '/delete',
+    [
+        check('token', 'Неверно заполнено поле').isString().isLength({ min: 1 }),
+        check('userid', 'Неверно заполнено поле').isString().isLength({ min: 8, max: 8 }),
+    ],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req)
+
+            if (!errors.isEmpty()) {
+                return res.status(300).json({ message: 'Проверка завершилась с ошибками', errcod: 'valid-err', errors: errors.array() })
+            }
+
+            const { token, userid } = req.body
+
+            console.log('req.body')
+
+            const decoded = jwt.verify(
+                token,
+                config.get('jwtSecret'),
+            );
+
+            if (!decoded)
+                return res.status(400).json({ message: 'Неверный токен', errcod: 'inv-token' })
+
+            const requestingUser = await User.findOne({ userid: decoded.userid })
+            if (!requestingUser) {
+                return res.status(400).json({ message: 'Запрашивающий пользователь не существует', errcod: 'req-sender-user-not-exist' })
+            }
+
+            const requestedUser = await User.findOne({ userid })
+
+            if (!requestedUser) {
+                return res.status(400).json({ message: 'Запрашиваемый пользователь не существует', errcod: 'req-user-not-exist' })
+            }
+
+            if (requestingUser.userid === requestedUser.userid)
+                return res.status(400).json({ message: 'Вы не можете удалить своего пользователя', errcod: 'cant-delete-youself' })
+
+            if (requestingUser.accesslevel < 4 || requestingUser.accesslevel <= requestedUser.accesslevel)
+                return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
+
+            await requestedUser.remove()
+
+            return res.status(200).json({ message: "Пользователь успешно удален" });
+        }
+        catch (e) {
+            console.log('e', e)
+            if (e.name === 'TokenExpiredError') {
+                res.status(400).json({ message: 'Срок действия токена истек', errcod: 'token-expired' })
+            }
+            else
+                res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
+        }
+    }
+);
+
+router.post(
+    '/list',
+    [
+        check('token', 'Неверно заполнено поле').isString().isLength({ min: 1 }),
+    ],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req)
+
+            if (!errors.isEmpty()) {
+                return res.status(300).json({ message: 'Проверка завершилась с ошибками', errcod: 'valid-err', errors: errors.array() })
+            }
+
+            const { token } = req.body
+
+            const decoded = jwt.verify(
+                token,
+                config.get('jwtSecret'),
+            );
+
+            const requestingUser = await User.findOne({ userid: decoded.userid })
+            if (!requestingUser) {
+                return res.status(400).json({ message: 'Запрашивающий пользователь не существует', errcod: 'req-sender-user-not-exist' })
+            }
+
+            if (requestingUser.accesslevel < 4)
+                return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
+
+            const finded = await User.find()
+            res.status(200).json({ users: finded })
+        }
+        catch (e) {
+            if (e.name === 'TokenExpiredError') {
+                res.status(400).json({ message: 'Срок действия токена истек', errcod: 'token-expired' })
+            }
+            else
+                res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
+        }
+    }
+)
 
 // /api/user/get
 router.post(
