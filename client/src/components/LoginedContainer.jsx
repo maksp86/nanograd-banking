@@ -6,7 +6,6 @@ import Modal from 'react-bootstrap/Modal'
 import { Switch, Route, Redirect } from 'react-router-dom'
 
 import Navigation from "./Navigation"
-import ErrorModal from "./ErrorModal"
 
 import '../static/css/CabinetPage.css'
 
@@ -60,10 +59,6 @@ export default function LoginedContainer(props) {
         if (auth.token && auth.userid)
             loadUser()
     }, [auth.token, auth.userid])
-
-    function Historyid(props) {
-        return <h1>{props.match.params.id}</h1>
-    }
 
     return (
         <RequestContext.Provider value={httpHook}>

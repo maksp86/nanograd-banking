@@ -67,15 +67,16 @@ export default function HistoryPage(props) {
             )
         }
         else
-            return (<Row className="thl-cont justify-content-center align-items-center">
-                <Col xs="auto">
-                    {
-                        props.transactions ?
-                            <h5 className="font-regular m-0 unselectable">транзакции не найдены</h5> :
-                            <Spinner style={{ height: "70px", width: "70px", margin: "auto 0" }} animation="border" />
-                    }
-                </Col>
-            </Row>)
+            return (
+                <Row className="thl-cont justify-content-center align-items-center">
+                    <Col xs="auto">
+                        {
+                            props.transactions ?
+                                <h5 className="font-regular m-0 unselectable">транзакции не найдены</h5> :
+                                <Spinner style={{ height: "70px", width: "70px", margin: "auto 0" }} animation="border" />
+                        }
+                    </Col>
+                </Row>)
     }
 
     return (
@@ -104,27 +105,7 @@ export default function HistoryPage(props) {
                     <IdField onChange={(val) => { setTransactionParamUserid((typeof val === "string") ? val : val.userid); }} value={transactionParamUserid} />
                 </Col>
             </Row>
-
-            {/* {
-                (transactions ? (transactions.length > 0) ?
-                    <div className="thl-cont mt-2">
-                        {transactions.map(transaction => (<TransactionHistoryLine key={transaction._id} info={transaction} />))}
-                    </div>
-                    : (<Row className="thl-cont align-items-center">
-                        <Col>
-                            <h5 className="font-regular text-center m-0 unselectable">транзакции не найдены</h5>
-                        </Col>
-                    </Row>) : (<Row className="justify-content-center align-items-center my-2">
-                        <Col xs="auto"><Spinner style={{ height: "70px", width: "70px", margin: "auto 0" }} animation="border" /></Col>
-                    </Row>))
-            } */}
-
             <GetContainer transactions={transactions} />
-
-
         </>
     )
-
-    return (<>
-    </>)
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import Navbar from 'react-bootstrap/Navbar'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
@@ -56,15 +56,15 @@ export default function Navigation(props) {
                     <Wallet2 size={30} />
                 </NavButton>
 
-                {(currUser && (currUser.accesslevel == 2 || currUser.accesslevel == 10)) && (<NavButton path="/shop" text="Касса">
+                {(currUser && (currUser.accesslevel === 2 || currUser.accesslevel === 10)) && (<NavButton path="/shop" text="Касса">
                     <Cash size={30} />
                 </NavButton>)}
 
-                {(currUser && (currUser.accesslevel == 3 || currUser.accesslevel == 10)) && (<NavButton path="/payments" text="Выплаты">
+                {(currUser && (currUser.accesslevel === 3 || currUser.accesslevel === 10)) && (<NavButton path="/payments" text="Выплаты">
                     <Bank size={30} />
                 </NavButton>)}
 
-                {(currUser && (currUser.accesslevel == 3 || currUser.accesslevel == 10)) && (<NavButton path="/users" text="Пользователи">
+                {(currUser && (currUser.accesslevel === 3 || currUser.accesslevel === 10)) && (<NavButton path="/users" text="Пользователи">
                     <People size={30} />
                 </NavButton>)}
 

@@ -115,13 +115,13 @@ export default function ShopPage(props) {
             <Row className="align-items-center my-2 mt-4">
                 <Col md='auto'>
                     <h4 className="m-0 font-regular" style={{ lineHeight: '50px', wordBreak: 'keep-all' }}>
-                        {payType == 3 ? "Покупатель:" : "Получатель:"}
+                        {payType === 3 ? "Покупатель:" : "Получатель:"}
                     </h4>
                 </Col>
                 <Col>
                     <AddValidationMsg err={validation.states['target']}>
                         <IdField
-                            placeholder={(payType == 3 ? "id покупателя" : "id получателя")}
+                            placeholder={(payType === 3 ? "id покупателя" : "id получателя")}
                             value={payUserid}
                             onChange={
                                 (val) => {

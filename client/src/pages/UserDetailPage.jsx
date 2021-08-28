@@ -25,7 +25,7 @@ export default function UserDetailPage(props) {
             try {
                 const data = await http.request('/api/user/get', 'POST', { token: auth.token, userid: props.match.params.userid })
                 console.log(data)
-                if ("data", data)
+                if (data)
                     if (data.user) {
                         setUser(data.user)
                     }

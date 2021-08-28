@@ -62,7 +62,7 @@ export default function UsersView(props) {
     }
 
     useEffect(() => {
-        if (!users || users.length == 0)
+        if (!users || users.length === 0)
             usersReload()
     }, [])
 

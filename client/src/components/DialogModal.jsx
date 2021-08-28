@@ -12,7 +12,7 @@ export default function DialogModal(props) {
                     (<Button
                         key={val.text}
                         size='lg'
-                        variant={val.primary == true ? "primary" : "outline-primary"}
+                        variant={val.primary === true ? "primary" : "outline-primary"}
                         className="mx-2 flex-fill"
                         onClick={val.action}
                     >{val.text}</Button>)

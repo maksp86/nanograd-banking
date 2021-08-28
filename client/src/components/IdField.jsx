@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import Button from 'react-bootstrap/Button'
 
-import { UpcScan, X } from 'react-bootstrap-icons'
+import { UpcScan } from 'react-bootstrap-icons'
 import ScannerModal from './ScannerModal'
 import { ModalContext } from '../context/ModalContext'
 import ClearableInput from './ClearableInput'

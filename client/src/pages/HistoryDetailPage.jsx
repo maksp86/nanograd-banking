@@ -28,7 +28,7 @@ export default function HistoryDetailPage(props) {
 
                 const data = await http.request('/api/pay/gettransact', 'POST', { token: auth.token, id: props.match.params.id })
                 console.log(data)
-                if ("data", data)
+                if (data)
                     if (data.transaction) {
 
                         const sender = (data.transaction.sender === auth.currUser.userid) ? { user: auth.currUser } : await http.request('/api/user/get', 'POST', { token: auth.token, userid: data.transaction.sender });

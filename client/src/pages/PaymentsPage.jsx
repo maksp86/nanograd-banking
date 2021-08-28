@@ -9,7 +9,6 @@ import ToggleButton from 'react-bootstrap/ToggleButton'
 import '../static/css/CabinetPage.css'
 import 'moment/locale/ru'
 
-import QrModal from '../components/QrModal'
 import ErrorModal from '../components/ErrorModal'
 import IdField from '../components/IdField'
 import AddValidationMsg from '../components/AddValidationMsg'
@@ -116,13 +115,13 @@ export default function PaymentsPage(props) {
             <Row className="align-items-center my-2 mt-4">
                 <Col md='auto'>
                     <h4 className="m-0 font-regular" style={{ lineHeight: '50px', wordBreak: 'keep-all' }}>
-                        {payType == 2 ? "Получатель:" : "Обвиняемый:"}
+                        {payType === 2 ? "Получатель:" : "Обвиняемый:"}
                     </h4>
                 </Col>
                 <Col>
                     <AddValidationMsg err={validation.states['target']}>
                         <IdField
-                            placeholder={(payType == 2 ? "id получателя" : "id обвиняемого")}
+                            placeholder={(payType === 2 ? "id получателя" : "id обвиняемого")}
                             value={payUserid}
                             onChange={
                                 (val) => {
