@@ -7,6 +7,7 @@ function getTimeGreeting() {
 }
 
 const accesslevelNames = {
+    '-1': "сервисный",
     0: "пользователь",
     2: "кассир",
     3: "модератор",
@@ -14,7 +15,7 @@ const accesslevelNames = {
     10: "суперпользователь"
 };
 
-const paymentTypes = 
+const paymentTypes =
 {
     1: "Перевод",
     2: "Зачисление зарплаты",

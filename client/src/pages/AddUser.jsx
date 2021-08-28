@@ -173,7 +173,7 @@ export default function AddUser(props) {
                                 <Form.Select
                                     className="rounded-pill"
                                     value={accesslevel}
-                                    onChange={(e) => setAccesslevel(e.target.value)}>
+                                    onChange={(e) => { console.log(parseInt(e.target.value)); setAccesslevel(parseInt(e.target.value))}}>
                                     {
                                         Object.entries(accesslevelNames).map(([level, name]) => (<option key={level} value={level}>{name}</option>))
                                     }

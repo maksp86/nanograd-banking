@@ -98,12 +98,16 @@ export default function HistoryPage(props) {
                         onClick={() => transactionsReload()}><ArrowClockwise /></Button>
                 </Col>
 
-                <Col className="ml-4 my-2" xs="auto">
-                    <Switch text="показать все" value={transactionParamShowAll} onChange={(e) => { setTransactionParamShowAll(e); }} />
-                </Col>
-                <Col xs="auto">
-                    <IdField onChange={(val) => { setTransactionParamUserid((typeof val === "string") ? val : val.userid); }} value={transactionParamUserid} />
-                </Col>
+                {auth.currUser.accesslevel > 1 && (
+                    <>
+                        <Col className="ml-4 my-2" xs="auto">
+                            <Switch text="показать все" value={transactionParamShowAll} onChange={(e) => { setTransactionParamShowAll(e); }} />
+                        </Col>
+                        <Col xs="auto">
+                            <IdField onChange={(val) => { setTransactionParamUserid((typeof val === "string") ? val : val.userid); }} value={transactionParamUserid} />
+                        </Col>
+                    </>
+                )}
             </Row>
             <GetContainer transactions={transactions} />
         </>

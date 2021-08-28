@@ -14,6 +14,7 @@ export default function TransactionHistoryLine(props) {
     const history = useHistory();
 
     const direction = (transaction.target === auth.currUser.userid) || (transaction.type === 2);
+    const userAffected = (transaction.target === auth.currUser.userid) || (transaction.sender === auth.currUser.userid)
 
     let transactionText = paymentTypes[transaction.type]
 
@@ -35,7 +36,7 @@ export default function TransactionHistoryLine(props) {
                         style={
                             {
                                 lineHeight: '30px',
-                                color: direction ? "#00AF54" : "#F08282"
+                                color: userAffected && (direction ? "#00AF54" : "#F08282")
                             }
                         }
                     >

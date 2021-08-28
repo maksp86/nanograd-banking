@@ -40,8 +40,8 @@ router.post(
                 userParams.accesslevel = 10;
                 console.log("no users")
 
-                new User({ name: "Магазин", surname: "", patronymic: "", password: "", userid: "shop", accesslevel: 0 }).save()
-                new User({ name: "Банк", surname: "", patronymic: "", password: "", userid: "bank", accesslevel: 0 }).save()
+                new User({ name: "Магазин", surname: "", patronymic: "", password: "", userid: "shop", accesslevel: -1 }).save()
+                new User({ name: "Банк", surname: "", patronymic: "", password: "", userid: "bank", accesslevel: -1 }).save()
             }
             else {
                 if (req.body.token && req.body.token.length > 0) {
@@ -60,7 +60,12 @@ router.post(
                             return res.status(400).json({ message: 'Запрашивающий пользователь не существует', errcod: 'req-sender-user-not-exist' })
                         }
 
-                        if (requestingUser.accesslevel < 4)
+                        if (req.body.accesslevel && typeof req.body.accesslevel === "number" && req.body.accesslevel <= 10 && req.body.accesslevel >= 0) {
+                            console.log(req.body.accesslevel)
+                            userParams.accesslevel = req.body.accesslevel
+                        }
+
+                        if (requestingUser.accesslevel < 4 || requestingUser.accesslevel < userParams.accesslevel)
                             return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
 
                         const userExists = await User.findOne({ name: name, surname: surname, patronymic: patronymic })
@@ -128,8 +133,8 @@ router.post(
             }
             userToEdit = requestingUser;
 
-            if (req.body.userid)
-                if (req.body.token.userid == 8) {
+            if (req.body.userid && req.body.userid != requestingUser.userid)
+                if (req.body.userid.length == 8) {
                     if (requestingUser.accesslevel < 4)
                         return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
 

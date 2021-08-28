@@ -1,10 +1,10 @@
-import React, {useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
 
-import {ArrowClockwise, PersonPlus } from 'react-bootstrap-icons'
+import { ArrowClockwise, PersonPlus } from 'react-bootstrap-icons'
 
 import ClearableInput from "../components/ClearableInput";
 
@@ -117,6 +117,7 @@ export default function UsersView(props) {
                             user =>
                                 <Col key={user.userid} xs="auto" className="px-1 py-2">
                                     <UserCard
+                                        showlevel={true}
                                         user={user}
                                         actions={true}
                                         onClick={() => { history.push(generatePath("/users/id:userid", { userid: user.userid })) }}

@@ -12,6 +12,7 @@ import { ModalContext } from "../context/ModalContext";
 import ErrorModal from "../components/ErrorModal";
 import Spinner from "react-bootstrap/esm/Spinner";
 import { CaretLeftFill } from "react-bootstrap-icons";
+import GetQR from "../components/GetQR";
 
 export default function UserDetailPage(props) {
     const [user, setUser] = useState(null);
@@ -63,55 +64,71 @@ export default function UserDetailPage(props) {
                             <h3 className="m-0" style={{ lineHeight: "40px" }}><span className="unselectable">Пользователь </span>{user.userid}</h3>
                         </Col>
                     </Row>
+                    <Row className="align-items-center justify-content-between my-2">
+                        <Col xs={12} md={6}>
 
-                    <Row className="justify-content-center">
-                        <Col>
-                            <h5 className="font-normal">
-                                <span className="unselectable">Фамилия: </span>
-                                <span className="font-regular">{user.surname}</span></h5>
+                            <Row className="justify-content-center">
+                                <Col>
+                                    <h5 className="font-normal">
+                                        <span className="unselectable">Фамилия: </span>
+                                        <span className="font-regular">{user.surname}</span></h5>
+                                </Col>
+                            </Row>
+
+                            <Row className="justify-content-center">
+                                <Col>
+                                    <h5 className="font-normal">
+                                        <span className="unselectable">Имя: </span>
+                                        <span className="font-regular">{user.name}</span></h5>
+                                </Col>
+                            </Row>
+
+                            <Row className="justify-content-center">
+                                <Col>
+                                    <h5 className="font-normal">
+                                        <span className="unselectable">Отчество: </span>
+                                        <span className="font-regular">{user.patronymic}</span></h5>
+                                </Col>
+                            </Row>
+
+                            <Row className="justify-content-center">
+                                <Col>
+                                    <h5 className="font-normal">
+                                        <span className="unselectable">Баланс: </span>
+                                        <span className="font-regular">{user.balance}</span>
+                                        <span className="font-regular unselectable"> нанолисиков</span></h5>
+                                </Col>
+                            </Row>
+
+                            <Row className="justify-content-center">
+                                <Col>
+                                    <h5 className="font-normal">
+                                        <span className="unselectable">Тип: </span>
+                                        <span className="font-regular">{accesslevelNames[user.accesslevel].toLowerCase()}</span></h5>
+                                </Col>
+                            </Row>
+                        </Col>
+
+                        <Col xs={12} md={6}>
+                            <div className="d-flex my-2">
+                                <GetQR
+                                    style={{ margin: "0 auto" }}
+                                    size={200}
+                                    data={{userid: user.userid}}
+                                />
+                            </div>
                         </Col>
                     </Row>
 
-                    <Row className="justify-content-center">
-                        <Col>
-                            <h5 className="font-normal">
-                                <span className="unselectable">Имя: </span>
-                                <span className="font-regular">{user.name}</span></h5>
-                        </Col>
-                    </Row>
 
-                    <Row className="justify-content-center">
-                        <Col>
-                            <h5 className="font-normal">
-                                <span className="unselectable">Отчество: </span>
-                                <span className="font-regular">{user.patronymic}</span></h5>
-                        </Col>
-                    </Row>
-
-                    <Row className="justify-content-center">
-                        <Col>
-                            <h5 className="font-normal">
-                                <span className="unselectable">Баланс: </span>
-                                <span className="font-regular">{user.balance}</span>
-                                <span className="font-regular unselectable"> нанолисиков</span></h5>
-                        </Col>
-                    </Row>
-
-                    <Row className="justify-content-center">
-                        <Col>
-                            <h5 className="font-normal">
-                                <span className="unselectable">Тип: </span>
-                                <span className="font-regular">{accesslevelNames[user.accesslevel].toLowerCase()}</span></h5>
-                        </Col>
-                    </Row>
                 </div>
             </>
-        )
-    else
-        return <>
-            <Row className="justify-content-center">
-                <Col xs="auto">
-                    <Spinner style={{ height: "70px", width: "70px", margin: "auto 0" }} animation="border" />
-                </Col>
-            </Row></>
+                )
+                else
+                return <>
+                    <Row className="justify-content-center">
+                        <Col xs="auto">
+                            <Spinner style={{ height: "70px", width: "70px", margin: "auto 0" }} animation="border" />
+                        </Col>
+                    </Row></>
 }

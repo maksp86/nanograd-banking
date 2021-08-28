@@ -66,6 +66,9 @@ router.post(
                 return res.status(400).json({ message: 'Неверный токен', errcod: 'inv-token' })
 
             if (type == 1) {
+                if (senderUser.userid.length < 8 || targetUser.userid.length < 8)
+                    return res.status(400).json({ message: 'Проверка завершилась с ошибками', errors: [{ msg: 'Неверно заполнено поле', param: 'target', }] })
+
                 if (senderUser.userid == decoded.userid) {
 
                     if (senderUser.balance >= amount) {
@@ -174,6 +177,8 @@ router.post(
                 return res.status(300).json({ message: 'Проверка завершилась с ошибками', errcod: 'valid-err', errors: errors.array() })
             }
 
+            console.log(req.body)
+
             const { token } = req.body
 
             const decoded = jwt.verify(
@@ -188,7 +193,7 @@ router.post(
 
             let searchParams = [{ sender: decoded.userid }, { target: decoded.userid }]
 
-            if (requestingUser.accesslevel > 4) {
+            if (requestingUser.accesslevel >= 4) {
                 if (typeof req.body.showAll === 'boolean' && req.body.showAll === true) {
                     searchParams = [{}]
                 }
