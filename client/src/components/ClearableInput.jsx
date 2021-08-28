@@ -1,28 +1,9 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
-
-import Navbar from 'react-bootstrap/Navbar'
-import Container from 'react-bootstrap/Container'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import ButtonGroup from 'react-bootstrap/ButtonGroup'
+import React from 'react'
 import Button from 'react-bootstrap/Button'
-import Spinner from 'react-bootstrap/Spinner'
-import Badge from 'react-bootstrap/Badge'
-import Modal from 'react-bootstrap/Modal'
 import FormControl from 'react-bootstrap/FormControl'
-import Form from 'react-bootstrap/Form'
-import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import InputGroup from 'react-bootstrap/InputGroup'
-import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
-import ToggleButton from 'react-bootstrap/ToggleButton'
 
-import Moment from 'react-moment';
-
-import Reader from '../components/Reader'
-
-import { QRCode } from 'react-qrcode-logo';
-
-import { HouseDoor, ClockHistory, Wallet2, Person, CaretRightFill, UpcScan, X, ArrowClockwise, Cash, Bank, People, Cpu } from 'react-bootstrap-icons'
+import { X } from 'react-bootstrap-icons'
 
 
 export default function ClearableInput(props) {
@@ -31,9 +12,11 @@ export default function ClearableInput(props) {
             className={"m-0 " + props.className }>
             <FormControl
                 value={props.value}
-                onChange={(e) => { props.onChange(e.target.value) }}
+                onChange={(e) => { props.onChange(props.type === "number" ? e.target.valueAsNumber : e.target.value) }}
                 placeholder={props.placeholder}
+                className="unselectable"
                 aria-label={props.placeholder}
+                type={ props.type || "text" }
             />
             <Button
                 variant="outline-primary"

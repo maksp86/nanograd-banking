@@ -1060,6 +1060,20 @@ export const CabinetPage = () => {
         )
     }
 
+    function LoadingView() {
+        return (
+            <>
+                <Row className="justify-content-center">
+                    <Col xs="auto">
+                        <div style={{ height: "300px", display: "flex" }}>
+                            <Spinner style={{ height: "70px", width: "70px", margin: "auto 0" }} animation="border" />
+                        </div>
+                    </Col>
+                </Row>
+            </>
+        )
+    }
+
     function NavButton(props) {
         return (
             <Button
@@ -1072,20 +1086,6 @@ export const CabinetPage = () => {
                     <span>{props.text}</span>
                 </div>
             </Button>
-        )
-    }
-
-    function LoadingView() {
-        return (
-            <>
-                <Row className="justify-content-center">
-                    <Col xs="auto">
-                        <div style={{ height: "300px", display: "flex" }}>
-                            <Spinner style={{ height: "70px", width: "70px", margin: "auto 0" }} animation="border" />
-                        </div>
-                    </Col>
-                </Row>
-            </>
         )
     }
 

@@ -4,7 +4,7 @@ import { Check2, X } from 'react-bootstrap-icons'
 
 import QrReader from 'react-qr-reader'
 
-import './Reader.css'
+import '../static/css/Reader.css'
 
 const readerPreviewStyle = {
     height: 250,
