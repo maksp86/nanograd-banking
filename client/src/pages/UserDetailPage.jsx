@@ -39,7 +39,7 @@ export default function UserDetailPage(props) {
 
     useEffect(() => {
         if (http.error) {
-            modal.show(<ErrorModal context={modal} error={{ message: "Ошибка загрузки пользователя" }} onClose={() => { props.history.goBack() }} />)
+            modal.show(<ErrorModal context={modal} error={{ message: "Ошибка загрузки пользователя" }} onClose={() => { props.history.goBack(); modal.close(); }} />)
             http.clearError()
         }
     }, [http.error])

@@ -52,7 +52,7 @@ export default function HistoryDetailPage(props) {
 
     useEffect(() => {
         if (http.error) {
-            modal.show(<ErrorModal context={modal} error={{ message: "Ошибка загрузки транзакции" }} onClose={() => { props.history.goBack() }} />)
+            modal.show(<ErrorModal context={modal} error={{ message: "Ошибка загрузки транзакции" }} onClose={() => { props.history.goBack(); modal.close() }} />)
             http.clearError()
         }
     }, [http.error])

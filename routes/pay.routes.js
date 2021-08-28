@@ -240,7 +240,7 @@ router.post(
             if (!transaction)
                 return res.status(400).json({ errors: [{ msg: 'Транзакция не существует', param: 'transaction' }] })
 
-            if (transaction.sender != requestingUser.userid && requestingUser.accesslevel < 4)
+            if ((transaction.target != requestingUser.userid && transaction.sender != requestingUser.userid) && requestingUser.accesslevel < 4)
                 return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
 
             res.status(200).json({ transaction })
