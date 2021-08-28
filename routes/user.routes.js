@@ -159,6 +159,52 @@ router.post(
     }
 );
 
+// /api/user/edit
+router.post(
+    '/makeid',
+    [
+        check('token', 'Неверно заполнено поле').isString().isLength({ min: 1 }),
+        check('userid', 'Неверно заполнено поле').isString().isLength({ min: 8, max: 8 })
+    ],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req)
+
+            if (!errors.isEmpty()) {
+                return res.status(300).json({ message: 'Проверка завершилась с ошибками', errcod: 'valid-err', errors: errors.array() })
+            }
+
+            const { token, userid } = req.body
+
+            const decoded = jwt.verify(
+                token,
+                config.get('jwtSecret'),
+            );
+
+            if (!decoded)
+                return res.status(400).json({ message: 'Неверный токен', errcod: 'inv-token' })
+
+            const requestingUser = await User.findOne({ userid: decoded.userid })
+            if (!requestingUser) {
+                return res.status(400).json({ message: 'Запрашивающий пользователь не существует', errcod: 'req-sender-user-not-exist' })
+            }
+
+            requestingUser.userid = userid
+
+            await requestingUser.save()
+
+            return res.status(200).json({ message: "Идентификатор успешно изменен" });
+        }
+        catch (e) {
+            if (e.name === 'TokenExpiredError') {
+                res.status(400).json({ message: 'Срок действия токена истек', errcod: 'token-expired' })
+            }
+            else
+                res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
+        }
+    }
+);
+
 // /api/user/delete
 router.post(
     '/delete',
