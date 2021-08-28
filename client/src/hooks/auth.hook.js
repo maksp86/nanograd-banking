@@ -21,13 +21,17 @@ export const useAuth = () => {
         localStorage.removeItem(storageName)
     }, [])
 
-    useEffect(() => {
+    const load = useCallback(() => {
         const data = JSON.parse(localStorage.getItem(storageName))
 
         if (data && data.token) {
             login(data.token, data.userid)
         }
+    }, [])
+
+    useEffect(() => {
+        load()
     }, [login])
 
-    return { login, logout, token, userid, currUser, setCurrUser }
+    return { load, login, logout, token, userid, currUser, setCurrUser }
 }
