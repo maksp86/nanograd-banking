@@ -14,8 +14,15 @@
     border-radius: 0;
     background-color: transparent;
     margin-left: 0;
-    width: 80px;
-    color: #9095aa;
+    color: #757a91;
+}
+
+.selectors button:not(big) {
+    min-width: 80px;
+}
+
+.selectors button.big {
+    min-width: 120px;
 }
 
 .selectors button:first-child {
@@ -58,6 +65,14 @@
 .button-active, .selectors button:hover, .selectors button:active, .selectors button:focus {
     background-color: #242737 !important;
     color: white !important
+}
+
+.button-active span, .selectors>button:hover span, .selectors>button:active span, .selectors>button:focus span {
+    display: initial;
+}
+
+button span {
+    display: none;
 }
 
 .thl {

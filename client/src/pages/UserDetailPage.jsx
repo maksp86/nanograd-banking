@@ -110,7 +110,7 @@ export default function UserDetailPage(props) {
     else
         return <>
             <Row className="justify-content-center">
-                <Col md="auto">
+                <Col xs="auto">
                     <Spinner style={{ height: "70px", width: "70px", margin: "auto 0" }} animation="border" />
                 </Col>
             </Row></>

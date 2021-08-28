@@ -14,7 +14,7 @@ import GetQR from '../components/GetQR'
 export default function UserCard(props) {
     if (props.user)
         return (
-            <Card onClick={props.onClick} style={{ width: props.width || '200px' }}>
+            <Card onClick={(e) => { console.log(e); props.onClick(); }} style={{ width: props.width || '200px' }}>
                 <Card.Body>
                     <Card.Title className="break-word">{props.user.surname} {props.user.name} {props.user.patronymic}</Card.Title>
 
@@ -31,14 +31,14 @@ export default function UserCard(props) {
                             className="rounded-circle p-1 m-1"
                             style={{ height: "34px", width: "34px" }}
                             variant="outline-primary"
-                            onClick={(e) => { props.onRemove(props.user) }}>
+                            onClick={(e) => { e.stopPropagation(); props.onRemove(props.user) }}>
                             <Trash />
                         </Button>
                         <Button
                             className="rounded-circle p-1 m-1"
                             style={{ height: "34px", width: "34px" }}
                             variant="outline-primary"
-                            onClick={(e) => { props.onPassChange(props.user) }}>
+                            onClick={(e) => { e.stopPropagation(); props.onPassChange(props.user) }}>
                             <Key />
                         </Button>
                     </>

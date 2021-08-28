@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { isDesktop } from "react-device-detect";
 import Navbar from 'react-bootstrap/Navbar'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Button from 'react-bootstrap/Button'
@@ -25,12 +25,12 @@ export default function Navigation(props) {
         return (
             <Button
                 variant="dark"
-                className={active && "button-active"}
+                className={active && "button-active" + " " + props.className}
                 onClick={() => navigateTo(props.path)}
             >
                 <div className="selector-holder">
                     {props.children}
-                    <span>{props.text}</span>
+                    {isDesktop && <span>{props.text}</span>}
                 </div>
             </Button>
         )
@@ -41,7 +41,7 @@ export default function Navigation(props) {
             variant="dark"
             fixed="bottom"
             className="p-0"
-            style={{ borderRadius: "35px 35px 0px 0px", height: "80px", overflowX: "auto", overflowY: "hidden" }}>
+            style={{ borderRadius: "35px 35px 0px 0px", height: isDesktop ? "80px" : "60px", overflowX: "auto", overflowY: "hidden" }}>
 
             <ButtonGroup className="selectors">
                 <NavButton path="/" exact={true} text="Главная">
@@ -56,17 +56,26 @@ export default function Navigation(props) {
                     <Wallet2 size={30} />
                 </NavButton>
 
-                {(currUser && (currUser.accesslevel === 2 || currUser.accesslevel === 10)) && (<NavButton path="/shop" text="Касса">
-                    <Cash size={30} />
-                </NavButton>)}
+                {(currUser && (currUser.accesslevel === 2 || currUser.accesslevel === 10)) &&
+                    (
+                        <NavButton path="/shop" text="Касса">
+                            <Cash size={30} />
+                        </NavButton>
+                    )}
 
-                {(currUser && (currUser.accesslevel === 3 || currUser.accesslevel === 10)) && (<NavButton path="/payments" text="Выплаты">
-                    <Bank size={30} />
-                </NavButton>)}
+                {(currUser && (currUser.accesslevel === 3 || currUser.accesslevel === 10)) &&
+                    (
+                        <NavButton path="/payments" text="Выплаты">
+                            <Bank size={30} />
+                        </NavButton>
+                    )}
 
-                {(currUser && (currUser.accesslevel === 3 || currUser.accesslevel === 10)) && (<NavButton path="/users" text="Пользователи">
-                    <People size={30} />
-                </NavButton>)}
+                {(currUser && (currUser.accesslevel === 3 || currUser.accesslevel === 10)) &&
+                    (
+                        <NavButton className={ isDesktop && "big"} path="/users" text="Пользователи">
+                            <People size={30} />
+                        </NavButton>
+                    )}
 
                 <NavButton path="/account" text="Аккаунт">
                     <Person size={30} />
