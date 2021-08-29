@@ -135,14 +135,14 @@ router.post(
 
             if (req.body.userid && req.body.userid != requestingUser.userid)
                 if (req.body.userid.length == 8) {
-                    if (requestingUser.accesslevel < 4)
-                        return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
-
                     const requestedUser = await User.findOne({ userid: req.body.userid })
-
+                    
                     if (!requestedUser) {
                         return res.status(400).json({ message: 'Запрашиваемый пользователь не существует', errcod: 'req-user-not-exist' })
                     }
+
+                    if (requestingUser.accesslevel < 4 || requestedUser.accesslevel >= requestingUser.accesslevel)
+                        return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
                     userToEdit = requestedUser;
                 }
                 else
