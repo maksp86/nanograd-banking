@@ -174,6 +174,7 @@ export default function PaymentsPage(props) {
             <Row className="justify-content-center">
                 <Col md={{ span: 4 }}>
                     <Button
+                        disabled={http.loading}
                         size='lg'
                         variant="outline-primary"
                         className="btn-block mt-2 fs-6"

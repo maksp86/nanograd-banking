@@ -16,6 +16,7 @@ import Switch from '../components/Switch'
 import { AuthContext } from '../context/AuthContext'
 import { RequestContext } from '../context/RequestContext'
 import TransactionHistoryLine from '../components/TransactionHistoryLine'
+import { NotShowFor } from '../components/ShowFor'
 
 export default function HistoryPage(props) {
     const auth = useContext(AuthContext)
@@ -98,16 +99,16 @@ export default function HistoryPage(props) {
                         onClick={() => transactionsReload()}><ArrowClockwise /></Button>
                 </Col>
 
-                {auth.currUser.accesslevel > 1 && (
-                    <>
-                        <Col className="ml-4 my-2" xs="auto">
-                            <Switch text="показать все" value={transactionParamShowAll} onChange={(e) => { setTransactionParamShowAll(e); }} />
-                        </Col>
-                        <Col xs="auto">
-                            <IdField onChange={(val) => { setTransactionParamUserid((typeof val === "string") ? val : val.userid); }} value={transactionParamUserid} />
-                        </Col>
-                    </>
-                )}
+                    <NotShowFor user={auth.currUser} level={1}>
+                        <>
+                            <Col className="ml-4 my-2" xs="auto">
+                                <Switch text="показать все" value={transactionParamShowAll} onChange={(e) => { setTransactionParamShowAll(e); }} />
+                            </Col>
+                            <Col xs="auto">
+                                <IdField onChange={(val) => { setTransactionParamUserid((typeof val === "string") ? val : val.userid); }} value={transactionParamUserid} />
+                            </Col>
+                        </>
+                    </NotShowFor>
             </Row>
             <GetContainer transactions={transactions} />
         </>

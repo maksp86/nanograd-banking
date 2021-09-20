@@ -3,13 +3,13 @@
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
 }
 
-.selectors {
+.selectors, .selectors-top {
     height: 100%;
     width: 100%;
     margin: 0 auto;
 }
 
-.selectors button {
+.selectors button, .selectors-top button, .selectors-top button:active.inactive, .selectors-top button:focus.inactive {
     border: 0;
     border-radius: 0;
     background-color: transparent;
@@ -25,6 +25,14 @@
     min-width: 120px;
 }
 
+.selectors button:not(big), .selectors-top button:not(big) {
+    width: 120px;
+}
+
+.selectors button.big, .selectors-top button.big {
+    width: 160px;
+}
+
 .selectors button:first-child {
     border-radius: 35px 0 0 0;
 }
@@ -33,11 +41,19 @@
     border-radius: 0 35px 0 0;
 }
 
-.selectors button:active {
+.selectors-top button:first-child {
+    border-radius: 0 0 0 35px;
+}
+
+.selectors-top button:last-child {
+    border-radius: 0 0 35px 0;
+}
+
+.selectors button:active, .selectors-top button:active {
     border: 0;
 }
 
-.selectors button:focus {
+.selectors button:focus, .selectors-top button:focus {
     border: 0;
     outline: 0;
     box-shadow: 0 0 0 0px;
@@ -60,14 +76,19 @@
     font-size: 0.8rem;
 }
 
+.selector-holder h5 {
+    margin: 0;
+    line-height: 30px;
+}
+
 /* Colors of the buttons*/
 
-.button-active, .selectors button:hover, .selectors button:active, .selectors button:focus {
+.button-active, .selectors button:hover, .selectors button:active, .selectors button:focus, .selectors-top button:hover, .selectors-top button:active:not(.inactive), .selectors-top button:focus:not(.inactive) {
     background-color: #242737 !important;
     color: white !important
 }
 
-.button-active span, .selectors>button:hover span, .selectors>button:active span, .selectors>button:focus span {
+.button-active span, .selectors>button:hover span, .selectors>button:active span, .selectors>button:focus span, .selectors-top>button span, .selectors-top>button span, .selectors-top>button span {
     display: initial;
 }
 

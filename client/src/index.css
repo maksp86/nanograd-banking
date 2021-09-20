@@ -52,3 +52,16 @@ body {
 img.unselectable {
   pointer-events: none
 }
+
+@keyframes movenav {
+  0%, 40% {
+      transform: translateY(-80px);
+  }
+  100% {
+      transform: translateY(0px);
+  }
+}
+
+.movingNav {
+  animation: 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1 movenav;
+}

@@ -21,11 +21,9 @@ export default function ScannerModal(props) {
                                     props.onSuccessfulScan(parsed);
                                     return true;
                                 }
-                                else
-                                    return false;
-
                             }
-                            catch (e) { return false; }
+                            catch (e) { }
+                            return false;
                         }
                     }
                 />
