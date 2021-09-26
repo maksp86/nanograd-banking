@@ -9,7 +9,7 @@ import { BrowserView, MobileView, isDesktop } from "react-device-detect";
 import Fade from 'react-reveal/Fade'
 
 
-import BottomNavigation from "./BottomNavigation"
+import BottomNavigation from "./Navigation/BottomNavigation"
 
 import '../static/css/CabinetPage.css'
 
@@ -32,7 +32,7 @@ import UserDetailPage from "../pages/UserDetailPage"
 import PayPage from "../pages/PayPage"
 import PaymentsPage from "../pages/PaymentsPage"
 import ShopPage from "../pages/ShopPage"
-import TopNavigation from "./TopNavigation";
+import TopNavigation from "./Navigation/TopNavigation";
 import DialogModal from "./DialogModal";
 
 export default function LoginedContainer(props) {
@@ -68,7 +68,7 @@ export default function LoginedContainer(props) {
 
         if (httpHook.error && httpHook.error.errcod === "token-expired") {
             httpHook.clearError()
-            auth.logout("")
+            auth.logout()
         }
     }, [httpHook.error])
 

@@ -8,11 +8,15 @@ import { AuthContext } from "../context/AuthContext"
 import { RequestContext } from "../context/RequestContext"
 import { ModalContext } from "../context/ModalContext"
 import ErrorModal from "./ErrorModal"
+import { useValidation } from "../hooks/validation.hook"
+import Field from "./AuthPage/Field"
+import { useHttp } from "../hooks/http.hook"
 
 
 export default function PasswordChangeModal(props) {
+    const validation = useValidation()
     const auth = useContext(AuthContext)
-    const { request, error, clearError, loading } = useContext(RequestContext)
+    const { request, error, clearError, loading } = useHttp()
     const modal = useContext(ModalContext)
 
     const [password, setPassword] = useState("")
@@ -20,16 +24,28 @@ export default function PasswordChangeModal(props) {
     async function changePass() {
         try {
             const data = await request('/api/user/edit', 'POST', { token: auth.token, userid: props.userid, password })
-            modal.setContent(<ErrorModal context={modal} error={{ message: data.message }} />)
+            if (data) {
+                modal.setContent(<ErrorModal context={modal} error={{ message: data.message }} />)
+                return
+            }
         }
         catch (e) {
+        }
+    }
 
+    function onKeyPressed(evt) {
+        if (evt.key === 'Enter') {
+            changePass();
         }
     }
 
     useEffect(() => {
         if (error) {
-            modal.setContent(<ErrorModal context={modal} error={{ message: error.message || "Ошибка смены пароля" }} />)
+            if (error.errors) {
+                validation.importStates(error.errors)
+            }
+            else
+                modal.setContent(<ErrorModal context={modal} error={{ message: error.message || "Ошибка смены пароля" }} />)
             clearError()
         }
     }, [error])
@@ -38,7 +54,7 @@ export default function PasswordChangeModal(props) {
         <div className="m-3" style={{ display: "flex", flexDirection: "column" }}>
             {props.userid && (<h5 className="mb-2 font-medium"><span className="unselectable font-regular">Изменение пароля для </span>{props.userid}</h5>)}
 
-            <FloatingLabel
+            {/* <FloatingLabel
                 controlId="floatingInput"
                 label="введите новый пароль"
                 className="mb-3 font-light unselectable"
@@ -49,7 +65,17 @@ export default function PasswordChangeModal(props) {
                     autoComplete="on"
                     value={password}
                     onChange={(e) => { setPassword(e.target.value) }} />
-            </FloatingLabel>
+            </FloatingLabel> */}
+
+            <Field
+                placeholder="введите новый пароль"
+                name="password"
+                value={password}
+                onChange={(e) => { setPassword(e); validation.unsetState("password") }}
+                onKeyPress={onKeyPressed}
+                disabled={loading}
+                validation={validation.states["password"]}
+            />
 
             <Button
                 size='lg'

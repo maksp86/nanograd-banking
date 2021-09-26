@@ -1,17 +1,17 @@
 import React from "react";
 
-function ShowFor(props) {
-    if (props.user)
-        if (parseInt(props.level) == props.user.accesslevel || (Array.isArray(props.level) && props.level.includes(props.user.accesslevel)))
-            return props.children
+function ShowFor({ user, level, children }) {
+    if (user)
+        if (parseInt(level) == user.accesslevel || (Array.isArray(level) && level.includes(user.accesslevel)))
+            return children
     return <></>
 }
 
-function NotShowFor(props) {
-    if (props.user)
-        if (parseInt(props.level) == props.user.accesslevel || (Array.isArray(props.level) && props.level.includes(props.user.accesslevel)))
+function NotShowFor({ user, level, children }) {
+    if (user)
+        if (parseInt(level) == user.accesslevel || (Array.isArray(level) && level.includes(user.accesslevel)))
             return <></>
-    return props.children
+    return children
 }
 
-export {ShowFor, NotShowFor}
+export { ShowFor, NotShowFor }

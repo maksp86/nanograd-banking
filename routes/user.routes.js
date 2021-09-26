@@ -19,8 +19,6 @@ router.post(
     async (req, res) => {
         try {
 
-            console.log('req', req.body)
-
             const errors = validationResult(req)
 
             if (!errors.isEmpty()) {
@@ -38,7 +36,6 @@ router.post(
 
             if (!await User.findOne()) {
                 userParams.accesslevel = 10;
-                console.log("no users")
 
                 new User({ name: "Магазин", surname: "", patronymic: "", password: "", userid: "shop", accesslevel: -1 }).save()
                 new User({ name: "Банк", surname: "", patronymic: "", password: "", userid: "bank", accesslevel: -1 }).save()
@@ -61,7 +58,6 @@ router.post(
                         }
 
                         if (req.body.accesslevel && typeof req.body.accesslevel === "number" && req.body.accesslevel <= 10 && req.body.accesslevel >= 0) {
-                            console.log(req.body.accesslevel)
                             userParams.accesslevel = req.body.accesslevel
                         }
 
@@ -72,14 +68,13 @@ router.post(
                         if (userExists) {
                             return res.status(400).json({ message: 'Пользователь существует' })
                         }
-
                     }
                     else {
                         return res.status(400).json({ message: 'Неверный токен', errcod: 'inv-token' })
                     }
                 }
                 else
-                    return res.status(400).json({ errors: [{ msg: 'Неверно заполнено поле', param: 'token' }] })
+                    return res.status(400).json({ errors: [{ msg: 'Неверно заполнено поле', param: 'token' }], errcod: 'valid-err' })
             }
 
             const user = new User(userParams)
@@ -95,8 +90,7 @@ router.post(
                 res.status(400).json({ message: 'Срок действия токена истек', errcod: 'token-expired' })
             }
             else
-                res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
-            console.log('ERR', error);
+                res.status(500).json({ message: 'Какая-то ошибка. Попробуйте еще раз.', errcod: 'some-err' })
         }
     });
 
@@ -131,22 +125,26 @@ router.post(
             if (!requestingUser) {
                 return res.status(400).json({ message: 'Запрашивающий пользователь не существует', errcod: 'req-sender-user-not-exist' })
             }
+
             userToEdit = requestingUser;
 
             if (req.body.userid && req.body.userid != requestingUser.userid)
-                if (req.body.userid.length == 8) {
+                if (req.body.userid.length > 0) {
                     const requestedUser = await User.findOne({ userid: req.body.userid })
-                    
+
                     if (!requestedUser) {
                         return res.status(400).json({ message: 'Запрашиваемый пользователь не существует', errcod: 'req-user-not-exist' })
                     }
+
+                    if (requestedUser.accesslevel == -1)
+                        return res.status(400).json({ message: 'Вы не можете изменять сервисного пользователя', errcod: 'cant-edit-service' })
 
                     if (requestingUser.accesslevel < 4 || requestedUser.accesslevel >= requestingUser.accesslevel)
                         return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
                     userToEdit = requestedUser;
                 }
                 else
-                    return res.status(400).json({ errors: [{ msg: 'Неверно заполнено поле', param: 'userid' }] })
+                    return res.status(400).json({ errors: [{ msg: 'Неверно заполнено поле', param: 'userid' }], errcod: 'valid-err' })
 
             userToEdit.password = await bcrypt.hash(password, config.get('hashSalt'))
 
@@ -159,7 +157,7 @@ router.post(
                 res.status(400).json({ message: 'Срок действия токена истек', errcod: 'token-expired' })
             }
             else
-                res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
+                res.status(500).json({ message: 'Какая-то ошибка. Попробуйте еще раз.', errcod: 'some-err' })
         }
     }
 );
@@ -194,6 +192,9 @@ router.post(
                 return res.status(400).json({ message: 'Запрашивающий пользователь не существует', errcod: 'req-sender-user-not-exist' })
             }
 
+            if (requestedUser.accesslevel == -1)
+                return res.status(400).json({ message: 'Вы не можете изменять сервисного пользователя', errcod: 'cant-edit-service' })
+
             requestingUser.userid = userid
 
             await requestingUser.save()
@@ -205,7 +206,7 @@ router.post(
                 res.status(400).json({ message: 'Срок действия токена истек', errcod: 'token-expired' })
             }
             else
-                res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
+                res.status(500).json({ message: 'Какая-то ошибка. Попробуйте еще раз.', errcod: 'some-err' })
         }
     }
 );
@@ -215,7 +216,7 @@ router.post(
     '/delete',
     [
         check('token', 'Неверно заполнено поле').isString().isLength({ min: 1 }),
-        check('userid', 'Неверно заполнено поле').isString().isLength({ min: 8, max: 8 }),
+        check('userid', 'Неверно заполнено поле').isString().isLength({ min: 1, max: 8 }),
     ],
     async (req, res) => {
         try {
@@ -227,7 +228,6 @@ router.post(
 
             const { token, userid } = req.body
 
-            console.log('req.body')
 
             const decoded = jwt.verify(
                 token,
@@ -248,6 +248,9 @@ router.post(
                 return res.status(400).json({ message: 'Запрашиваемый пользователь не существует', errcod: 'req-user-not-exist' })
             }
 
+            if (requestedUser.accesslevel == -1)
+                return res.status(400).json({ message: 'Вы не можете удалить сервисного пользователя', errcod: 'cant-edit-service' })
+
             if (requestingUser.userid === requestedUser.userid)
                 return res.status(400).json({ message: 'Вы не можете удалить своего пользователя', errcod: 'cant-delete-youself' })
 
@@ -259,12 +262,11 @@ router.post(
             return res.status(200).json({ message: "Пользователь успешно удален" });
         }
         catch (e) {
-            console.log('e', e)
             if (e.name === 'TokenExpiredError') {
                 res.status(400).json({ message: 'Срок действия токена истек', errcod: 'token-expired' })
             }
             else
-                res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
+                res.status(500).json({ message: 'Какая-то ошибка. Попробуйте еще раз.', errcod: 'some-err' })
         }
     }
 );
@@ -305,7 +307,7 @@ router.post(
                 res.status(400).json({ message: 'Срок действия токена истек', errcod: 'token-expired' })
             }
             else
-                res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
+                res.status(500).json({ message: 'Какая-то ошибка. Попробуйте еще раз.', errcod: 'some-err' })
         }
     }
 )
@@ -318,7 +320,6 @@ router.post(
     ],
     async (req, res) => {
         try {
-            console.log(req.body)
 
             const errors = validationResult(req)
 
@@ -354,12 +355,11 @@ router.post(
                     let requestingUser = null;
 
                     if (!(requestedUser.userid === decoded.userid)) {
-                        console.log('search', decoded.userid)
                         requestingUser = await User.findOne({ userid: decoded.userid })
 
                         if (!requestingUser) {
                             //WTF
-                            return res.status(400).json({ message: 'Запрашиваемый пользователь не существует', errcod: 'req-user-not-exist' })
+                            return res.status(400).json({ message: 'Запрашивающий пользователь не существует', errcod: 'req-user-not-exist' })
                         }
                     }
 
@@ -374,7 +374,6 @@ router.post(
 
                 }
             }
-            console.log('returned', user)
             return res.status(200).json({ user });
 
         }
@@ -383,7 +382,7 @@ router.post(
                 res.status(400).json({ message: 'Срок действия токена истек', errcod: 'token-expired' })
             }
             else
-                res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
+                res.status(500).json({ message: 'Какая-то ошибка. Попробуйте еще раз.', errcod: 'some-err' })
         }
     }
 )

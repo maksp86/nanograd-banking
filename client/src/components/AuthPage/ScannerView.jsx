@@ -35,6 +35,7 @@ export default function ScannerView({ onResult = (data) => { } }) {
 
     const [hideErrorTimeout, setHideErrorTimeout] = useState()
 
+    const auth = useContext(AuthContext)
     const http = useContext(RequestContext)
 
     function removeTimeout() {
@@ -73,21 +74,32 @@ export default function ScannerView({ onResult = (data) => { } }) {
         http.clearError()
     }, [http.error])
 
+    async function getUser(userid) {
+        console.log("getUser", userid)
+        try {
+            const data = await http.request('/api/user/get', 'POST', { userid })
+
+            if (data) {
+                if (data.user) {
+                    setUser(data.user);
+                    return true;
+                }
+
+            }
+        }
+        catch (e) {
+
+        }
+        return false;
+    }
+
     async function onPreReaded(data) {
         try {
             setGetNameFail(false)
             const parsed = JSON.parse(data);
 
             if (parsed && parsed.userid) {
-                const data = await http.request('/api/user/get', 'POST', { userid: parsed.userid })
-
-                if (data) {
-                    if (data.user) {
-                        setUser(data.user);
-                        return true;
-                    }
-
-                }
+                return getUser(parsed.userid)
             }
         }
         catch (e) {

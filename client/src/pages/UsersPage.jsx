@@ -16,9 +16,11 @@ import { generatePath, useHistory } from 'react-router-dom'
 import { RequestContext } from '../context/RequestContext'
 import ErrorModal from '../components/ErrorModal'
 import DialogModal from '../components/DialogModal'
+import { useTitle } from '../hooks/title.hook'
 
 export default function UsersView(props) {
     const history = useHistory()
+    const title = useTitle()
 
     const auth = useContext(AuthContext)
     const modal = useContext(ModalContext)
@@ -48,20 +50,8 @@ export default function UsersView(props) {
         }
     }
 
-    async function deleteUser(userid) {
-        try {
-            const data = await http.request('/api/user/delete', 'POST', { token: auth.token, userid });
-            if (data) {
-                modal.show(<ErrorModal context={modal} error={{ message: data.message }} />)
-                setUsers(users.filter(user => user.userid !== userid));
-            }
-        }
-        catch (e) {
-
-        }
-    }
-
     useEffect(() => {
+        title.set("Пользователи")
         if (!users || users.length === 0)
             usersReload()
     }, [])
@@ -119,24 +109,24 @@ export default function UsersView(props) {
                                     <UserCard
                                         showlevel={true}
                                         user={user}
-                                        actions={true}
+                                        actions={false}
                                         onClick={() => { history.push(generatePath("/users/id:userid", { userid: user.userid })) }}
-                                        onRemove={
-                                            (e) => {
-                                                modal.show(<DialogModal
-                                                    message={"Удалить пользователя " + e.userid + "?"}
-                                                    buttons={[
-                                                        { text: "Нет", primary: false, action: () => { modal.close() } },
-                                                        { text: "Да", primary: true, action: () => { deleteUser(e.userid); modal.close() } }
-                                                    ]}
-                                                />)
-                                            }
-                                        }
-                                        onPassChange={
-                                            (user) => {
-                                                modal.show(<PasswordChangeModal userid={user.userid} />)
-                                            }
-                                        }
+                                    // onRemove={
+                                    //     (e) => {
+                                    //         modal.show(<DialogModal
+                                    //             message={"Удалить пользователя " + e.userid + "?"}
+                                    //             buttons={[
+                                    //                 { text: "Нет", primary: false, action: () => { modal.close() } },
+                                    //                 { text: "Да", primary: true, action: () => { deleteUser(e.userid); modal.close() } }
+                                    //             ]}
+                                    //         />)
+                                    //     }
+                                    // }
+                                    // onPassChange={
+                                    //     (user) => {
+                                    //         modal.show(<PasswordChangeModal userid={user.userid} />)
+                                    //     }
+                                    // }
                                     />
                                 </Col>)}
                 </Row>

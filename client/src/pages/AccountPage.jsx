@@ -1,17 +1,23 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
 import Badge from 'react-bootstrap/Badge'
 
+import { useTitle } from '../hooks/title.hook'
 import { AuthContext } from '../context/AuthContext'
 import PasswordChangeModal from '../components/PasswordChangeModal'
 import { ModalContext } from '../context/ModalContext'
 
 export default function AccountPage(props) {
-    const {currUser, logout} = useContext(AuthContext)
+    const { currUser, logout } = useContext(AuthContext)
     const modal = useContext(ModalContext)
+    const title = useTitle()
+
+    useEffect(() => {
+        title.set("Аккаунт")
+    }, [])
 
     return (
         <>
@@ -48,7 +54,7 @@ export default function AccountPage(props) {
                         size='lg'
                         variant="primary"
                         className="btn-block mt-4"
-                        onClick={() => { logout() }}
+                        onClick={() => { logout(true) }}
                     >выйти</Button>
                 </Col>
             </Row>

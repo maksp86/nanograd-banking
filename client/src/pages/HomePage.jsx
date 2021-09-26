@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -11,10 +11,16 @@ import QrModal from '../components/QrModal'
 import { AuthContext } from '../context/AuthContext'
 import { getTimeGreeting } from '../helpers/funcs'
 import { ModalContext } from '../context/ModalContext'
+import { useTitle } from '../hooks/title.hook'
 
 export default function HomePage(props) {
-    const {currUser} = useContext(AuthContext)
+    const { currUser } = useContext(AuthContext)
     const modal = useContext(ModalContext)
+    const title = useTitle()
+
+    useEffect(() => {
+        title.set("Главная")
+    }, [])
 
     return (
         <>

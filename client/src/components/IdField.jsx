@@ -13,11 +13,20 @@ export default function IdField(props) {
         <ClearableInput
             placeholder={props.placeholder || "id получателя"}
             value={props.value}
-            onChange={(e) => { props.onChange(e) }}>
+            onChange={(e) => {
+                props.onChange(e)
+            }}>
             <Button
                 variant="outline-primary"
                 onClick={() => {
-                    modal.show(<ScannerModal context={modal} onSuccessfulScan={(data) => { props.onChange(data); console.log(data) }} />)
+                    modal.show(<ScannerModal
+                        context={modal}
+                        validator={props.validator}
+                        onSuccessfulScan={
+                            (data) => {
+                                props.onChange(data);
+                                console.log(data)
+                            }} />)
                 }}
             >
                 <UpcScan className="mx-2" size={20} />

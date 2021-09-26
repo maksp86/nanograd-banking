@@ -25,94 +25,20 @@ import { getTimeGreeting } from '../../helpers/funcs'
 import { isDesktop } from 'react-device-detect'
 import Switch from '../Switch'
 import { RequestContext } from '../../context/RequestContext'
+import Field from './Field'
+import PasswordField from './PasswordField'
+import LoadingButton from '../LoadingButton'
 
-function Field(props) {
-    const [needMessage, setneedMessage] = useState(false)
-    useEffect(() => {
-        setneedMessage(props.validation && props.validation.value)
-    }, [props, props.validation])
 
-    return (
-        <>
-            <Row>
-                <Col>
-                    <FloatingLabel
-                        controlId={props.name + "Input"}
-                        label={props.placeholder}
-                        className="mb-3 mx-2 font-light unselectable"
-                    >
-                        <Form.Control
-                            type={props.type || "text"}
-                            autoComplete="on"
-                            onKeyPress={props.onKeyPress}
-                            placeholder={props.placeholder}
-                            isInvalid={needMessage}
-                            value={props.value}
-                            disabled={props.disabled}
-                            onChange={(e) => { props.onChange(e.target.value); }}
-                        />
-
-                        <Fade
-                            left
-                            duration={300}
-                            distance="5%"
-                            opposite
-                            when={needMessage}
-                            unmountOnExit={true}
-                            mountOnEnter={true}
-                            appear={false}
-                        >
-                            <h6 className="mx-3 mt-1 font-light text-danger">
-                                {needMessage && props.validation.message}
-                            </h6>
-                        </Fade>
-                    </FloatingLabel>
-                </Col>
-            </Row>
-        </>
-    )
-}
-
-function PasswordField(props) {
-    const [showPassword, setShowPassword] = useState(false)
-    return (
-        <>
-            <Field
-                type={showPassword ? "text" : "password"}
-                placeholder="введите пароль"
-                value={props.value}
-                onChange={props.onChange}
-                onKeyPress={props.onKeyPress}
-                validation={props.validation}
-                disabled={props.disabled}
-                name="password"
-            />
-            <Row className="justify-content-end">
-                <Col xs={{ offset: 4 }}>
-                    <Switch
-                        text="показать пароль"
-                        className="mx-2"
-                        checked={showPassword}
-                        onChange={
-                            (e) => setShowPassword(e)
-                        }
-                    />
-                </Col>
-            </Row>
-        </>
-    )
-}
 
 export default function PassView(props) {
 
     const hasUser = props.user ? true : false;
     const [userid, setUserid] = useState(hasUser ? props.user.userid : "")
     const [password, setPassword] = useState("")
-
-    const auth = useContext(AuthContext)
     const validation = useValidation();
 
-    const http = useHttp()
+    const http = useContext(RequestContext)
 
     useEffect(() => {
         if (http.error) {
@@ -126,7 +52,7 @@ export default function PassView(props) {
     const handleLogin = async () => {
         try {
             const data = await http.request('/api/auth/login', 'POST', { userid, password })
-            auth.login(data.token, data.userid)
+            props.onLogin(data.token, data.userid)
         } catch (e) { }
     }
 
@@ -179,8 +105,9 @@ export default function PassView(props) {
 
             <Row className="justify-content-center">
                 <Col>
-                    <Button
+                    {/* <Button
                         onClick={handleLogin}
+                        // onClick={(e) => { props.onLogin("", "") }}
                         disabled={http.loading}
                         className="btn-block mt-3"
                         variant="primary"
@@ -193,7 +120,14 @@ export default function PassView(props) {
                             />
                             :
                             "войти"}
-                    </Button>
+                    </Button> */}
+                    <LoadingButton
+                        onClick={handleLogin}
+                        loading={http.loading}
+                        className="btn-block mt-3"
+                        variant="primary"
+                        size='lg'
+                    >войти</LoadingButton>
                 </Col>
             </Row>
         </>

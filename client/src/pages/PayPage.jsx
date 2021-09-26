@@ -19,6 +19,8 @@ import { RequestContext } from '../context/RequestContext'
 import { generatePath, useHistory } from 'react-router-dom'
 import ClearableInput from '../components/ClearableInput'
 import DialogModal from '../components/DialogModal'
+import LoadingButton from '../components/LoadingButton'
+import { useTitle } from '../hooks/title.hook'
 
 export default function PayPage(props) {
     const modal = useContext(ModalContext)
@@ -26,6 +28,13 @@ export default function PayPage(props) {
     const auth = useContext(AuthContext)
     const history = useHistory()
     const validation = useValidation()
+    const title = useTitle()
+
+    const [payUserid, setPayUserid] = useState("");
+    const [payAmount, setPayAmount] = useState(0);
+    const [payMessage, setPayMessage] = useState("");
+
+    useEffect(() => { title.set("Оплата") }, [])
 
     useEffect(() => {
         if (http.error) {
@@ -57,12 +66,11 @@ export default function PayPage(props) {
             const data = await http.request('/api/pay/send', "POST",
                 {
                     token: auth.token,
-                    sender: paySender,
+                    sender: auth.userid,
                     target: payUserid,
                     amount: payAmount,
-                    type: payType,
-                    message: payMessage,
-                    paymentToken: payToken
+                    type: 1,
+                    message: payMessage
                 })
             console.log("DATA", data)
 
@@ -83,19 +91,12 @@ export default function PayPage(props) {
                 setPayUserid("")
                 setPayAmount(0)
                 setPayMessage("")
-                setPayToken("")
             }
         }
         catch (e) {
         }
     });
 
-    const [paySender, setPaySender] = useState("");
-    const [payUserid, setPayUserid] = useState("");
-    const [payAmount, setPayAmount] = useState(0);
-    const [payMessage, setPayMessage] = useState("");
-    const [payToken, setPayToken] = useState("");
-    const [payType, setPayType] = useState(1);
 
     return (
         <div className="m-3">
@@ -166,13 +167,14 @@ export default function PayPage(props) {
 
             <Row className="justify-content-center">
                 <Col md={{ span: 4 }}>
-                    <Button
-                        disabled={http.loading}
+                    <LoadingButton
+                        loading={http.loading}
                         size='lg'
                         variant="outline-primary"
                         className="btn-block mt-2 fs-6"
-                        onClick={() => { setPaySender(auth.userid); makeTransaction(); }}
-                    >Перевести</Button></Col>
+                        onClick={() => { makeTransaction(); }}
+                    >Перевести</LoadingButton>
+                </Col>
             </Row>
         </div >
     )

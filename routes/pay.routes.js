@@ -33,30 +33,32 @@ router.post(
 
             const { sender, target, amount, type, token } = req.body
 
-            console.log("req.body", req.body)
 
             if (message == '' && type == 21) {
-                return res.status(400).json({ errors: [{ msg: 'Неверно заполнено поле', param: 'message', }] })
+                return res.status(400).json({ errors: [{ msg: 'Неверно заполнено поле', param: 'message', }], errcod: 'valid-err' })
             }
 
             if (amount < 1)
-                return res.status(400).json({ errors: [{ msg: 'Сумма должна быть положительным числом', param: 'amount', }] })
+                return res.status(400).json({ errors: [{ msg: 'Сумма должна быть положительным числом', param: 'amount' }], errcod: 'valid-err' })
 
             if (sender == target)
-                return res.status(400).json({ message: 'Вы не можете платить себе', errors: [{ msg: 'Вы не можете платить себе', param: 'target', }] })
+                return res.status(400).json({ message: 'Вы не можете платить себе', errors: [{ msg: 'Вы не можете платить себе', param: 'target' }], errcod: 'valid-err' })
 
+            //check sender
             const senderUser = await User.findOne({ userid: sender })
 
-            if (!senderUser && (type == 1 || type == 21 || type == 3)) {
-                return res.status(400).json({ errors: [{ msg: 'Отправитель не существует', param: 'sender' }] })
+            if (!senderUser) {
+                return res.status(400).json({ errors: [{ msg: 'Отправитель не существует', param: 'sender' }], errcod: 'valid-err' })
             }
 
+            //check target
             const targetUser = await User.findOne({ userid: target })
 
-            if (!targetUser && (type == 1 || type == 2 || type == 31)) {
-                return res.status(400).json({ errors: [{ msg: 'Получатель не существует', param: 'target' }] })
+            if (!targetUser) {
+                return res.status(400).json({ errors: [{ msg: 'Получатель не существует', param: 'target' }], errcod: 'valid-err' })
             }
 
+            //check token
             const decoded = jwt.verify(
                 token,
                 config.get('jwtSecret'),
@@ -65,10 +67,26 @@ router.post(
             if (!decoded)
                 return res.status(400).json({ message: 'Неверный токен', errcod: 'inv-token' })
 
+            //switch type
             if (type == 1) {
                 if (senderUser.userid.length < 8 || targetUser.userid.length < 8)
-                    return res.status(400).json({ message: 'Проверка завершилась с ошибками', errors: [{ msg: 'Неверно заполнено поле', param: 'target', }] })
+                    return res.status(400).json({ message: 'Проверка завершилась с ошибками', errors: [{ msg: 'Неверно заполнено поле', param: 'target' }], errcod: 'valid-err' })
 
+                //check if service user
+                if (targetUser.accesslevel == -1)
+                    return res.status(400).json(
+                        {
+                            message: 'Вы не можете переводить сервисному пользователю',
+                            errors: [
+                                {
+                                    msg: 'Вы не можете переводить сервисному пользователю',
+                                    param: 'target'
+                                }
+                            ],
+                            errcod: 'valid-err'
+                        })
+
+                //money actions
                 if (senderUser.userid == decoded.userid) {
 
                     if (senderUser.balance >= amount) {
@@ -116,7 +134,6 @@ router.post(
 
                                 if (findedToken && findedToken.expiryDate > new Date()) {
                                     await findedToken.remove();
-                                    console.log("findedToken.userid", findedToken.userid)
                                     if (findedToken.userid != (type === 31 ? targetUser : senderUser).userid)
                                         return res.status(400).json({ message: 'Чужой платежный токен', errcod: 'stolen-paytoken' })
 
@@ -137,7 +154,7 @@ router.post(
                                     return res.status(400).json({ message: 'Срок действия платежного токена истек', errcod: 'pay-token-expired' })
                             }
                             else
-                                return res.status(400).json({ errors: [{ msg: 'Неверно заполнено поле', param: 'paymentToken' }] })
+                                return res.status(400).json({ errors: [{ msg: 'Неверно заполнено поле', param: 'paymentToken' }], errcod: 'valid-err' })
                         }
                         else
                             return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
@@ -145,7 +162,7 @@ router.post(
                 }
             }
 
-            transactionParams = { sender, target, amount, type, message };
+            transactionParams = { sender, target, amount, type, message, state: 1 };
             const transaction = new Transaction(transactionParams);
             await transaction.save()
             res.status(201).json({ message: 'Успешная транзакция', transaction });
@@ -156,14 +173,14 @@ router.post(
                 res.status(400).json({ message: 'Срок действия токена истек', errcod: 'token-expired' })
             }
             else {
-                console.log("err", e);
-                res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
+                res.status(500).json({ message: 'Какая-то ошибка. Попробуйте еще раз.', errcod: 'some-err' })
             }
         }
 
     }
 )
 
+// /api/pay/listtransact
 router.post(
     '/listtransact',
     [
@@ -177,14 +194,15 @@ router.post(
                 return res.status(300).json({ message: 'Проверка завершилась с ошибками', errcod: 'valid-err', errors: errors.array() })
             }
 
-            console.log(req.body)
-
             const { token } = req.body
 
             const decoded = jwt.verify(
                 token,
                 config.get('jwtSecret'),
             );
+
+            if (!decoded)
+                return res.status(400).json({ message: 'Неверный токен', errcod: 'inv-token' })
 
             const requestingUser = await User.findOne({ userid: decoded.userid })
             if (!requestingUser) {
@@ -223,8 +241,7 @@ router.post(
                         }
                 }
             }
-            console.log(searchParams)
-            const finded = await Transaction.find().or(searchParams)
+            const finded = await Transaction.find().or(searchParams).select('amount _id type state sender target date')
             res.status(200).json({ transactions: finded })
         }
         catch (e) {
@@ -232,7 +249,103 @@ router.post(
                 res.status(400).json({ message: 'Срок действия токена истек', errcod: 'token-expired' })
             }
             else
-                res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
+                res.status(500).json({ message: 'Какая-то ошибка. Попробуйте еще раз.', errcod: 'some-err' })
+        }
+    }
+)
+
+// /api/pay/undotransact
+router.post(
+    '/undotransact',
+    [
+        check('token', 'Неверно заполнено поле').isString().isLength({ min: 1 }),
+        check('id', 'Неверно заполнено поле').isString().isLength({ min: 24, max: 24 }),
+    ],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                return res.status(300).json({ message: 'Проверка завершилась с ошибками', errcod: 'valid-err', errors: errors.array() })
+            }
+            const { token, id } = req.body
+
+            const decoded = jwt.verify(
+                token,
+                config.get('jwtSecret'),
+            );
+
+            if (!decoded)
+                return res.status(400).json({ message: 'Неверный токен', errcod: 'inv-token' })
+
+            const requestingUser = await User.findOne({ userid: decoded.userid })
+            if (!requestingUser)
+                return res.status(400).json({ message: 'Запрашивающий пользователь не существует', errcod: 'req-sender-user-not-exist' })
+
+            const transaction = await Transaction.findOne({ _id: id })
+            if (!transaction)
+                return res.status(400).json({ errors: [{ msg: 'Транзакция не существует', param: 'transaction' }], errcod: 'valid-err' })
+
+            //check if already canceled
+            if (transaction.state == -1)
+                return res.status(400).json({ errors: [{ msg: 'Транзакция уже отменена', param: 'transaction' }], errcod: 'valid-err' })
+
+            //check rights
+            const canModifyCashier = ((transaction.type == 3 || transaction.type == 31) && requestingUser.accesslevel === 2) && (config.get("rights.2.modifyTransactions") || false)
+            const canModifyModerator = ((transaction.type == 2 || transaction.type == 21) && requestingUser.accesslevel === 3) && (config.get("rights.3.modifyTransactions") || false)
+
+            if (!canModifyCashier &&
+                !canModifyModerator &&
+                requestingUser.accesslevel < 4)
+                return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
+
+            //check sender
+            const senderUser = await User.findOne({ userid: transaction.sender })
+
+            if (!senderUser) {
+                return res.status(400).json({ message: 'Отправитель не существует', errcod: 'user-not-exist' })
+            }
+
+            //check target
+            const targetUser = await User.findOne({ userid: transaction.target })
+
+            if (!targetUser) {
+                return res.status(400).json({ message: 'Получатель не существует', errcod: 'user-not-exist' })
+            }
+
+            if (transaction.state != 0)
+                switch (transaction.type) {
+                    case 1:
+                        //money actions
+                        senderUser.balance += transaction.amount
+                        targetUser.balance -= transaction.amount
+
+                        await senderUser.save()
+                        await targetUser.save()
+                        break;
+
+                    case 21:
+                        senderUser.balance += transaction.amount;
+                        await senderUser.save();
+                        break;
+
+                    case 2:
+                        targetUser.balance -= transaction.amount;
+                        await targetUser.save();
+                        break;
+
+                    default:
+                        return res.status(400).json({ message: 'Невозможно отменить транзакцию', errcod: 'user-not-exist' })
+                        break;
+                }
+
+            transaction.state = -1;
+            await transaction.save()
+
+            res.status(200).json({ message: 'Транзакция успешно отменена', errcod: 'success' })
+        }
+        catch (e) {
+            console.log(e)
+            res.status(500).json({ message: 'Какая-то ошибка. Попробуйте еще раз.', errcod: 'some-err' })
         }
     }
 )
@@ -258,19 +371,25 @@ router.post(
                 config.get('jwtSecret'),
             );
 
+            if (!decoded)
+                return res.status(400).json({ message: 'Неверный токен', errcod: 'inv-token' })
+
             const requestingUser = await User.findOne({ userid: decoded.userid })
             if (!requestingUser)
                 return res.status(400).json({ message: 'Запрашивающий пользователь не существует', errcod: 'req-sender-user-not-exist' })
 
             const transaction = await Transaction.findOne({ _id: id })
             if (!transaction)
-                return res.status(400).json({ errors: [{ msg: 'Транзакция не существует', param: 'transaction' }] })
+                return res.status(400).json({ errors: [{ msg: 'Транзакция не существует', param: 'transaction' }], errcod: 'valid-err' })
 
-            if (!((transaction.type == 3 || transaction.type == 31) && requestingUser.accesslevel === 2) &&
-                !((transaction.type == 2 || transaction.type == 21) && requestingUser.accesslevel === 3))
-                if ((transaction.target != requestingUser.userid && transaction.sender != requestingUser.userid) &&
-                    requestingUser.accesslevel < 4)
-                    return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
+            //check rights
+            const canGetCashier = ((transaction.type == 3 || transaction.type == 31) && requestingUser.accesslevel === 2)
+            const canGetModerator = ((transaction.type == 2 || transaction.type == 21) && requestingUser.accesslevel === 3)
+
+            if (!canGetCashier &&
+                !canGetModerator &&
+                requestingUser.accesslevel < 4)
+                return res.status(400).json({ message: 'Не хватает прав доступа', errcod: 'no-permission' })
 
             res.status(200).json({ transaction })
         }
@@ -279,8 +398,7 @@ router.post(
                 res.status(400).json({ message: 'Срок действия токена истек', errcod: 'token-expired' })
             }
             else {
-                console.log("err", e);
-                res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
+                res.status(500).json({ message: 'Какая-то ошибка. Попробуйте еще раз.', errcod: 'some-err' })
             }
         }
     }
@@ -320,8 +438,7 @@ router.post(
                 res.status(400).json({ message: 'Срок действия токена истек', errcod: 'token-expired' })
             }
             else
-                res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
-            //console.log('ERR', e);
+                res.status(500).json({ message: 'Какая-то ошибка. Попробуйте еще раз.', errcod: 'some-err' })
         }
     }
 )

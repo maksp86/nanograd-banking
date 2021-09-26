@@ -17,10 +17,12 @@ import { AuthContext } from '../context/AuthContext'
 import { RequestContext } from '../context/RequestContext'
 import TransactionHistoryLine from '../components/TransactionHistoryLine'
 import { NotShowFor } from '../components/ShowFor'
+import { useTitle } from '../hooks/title.hook'
 
 export default function HistoryPage(props) {
     const auth = useContext(AuthContext)
     const { request } = useContext(RequestContext)
+    const title = useTitle()
 
     const [transactions, setTransactions] = useState(null);
     const [transactionParamShowAll, setTransactionParamShowAll] = useState(false);
@@ -43,10 +45,9 @@ export default function HistoryPage(props) {
         }
     }
 
-    // useEffect(() => {
-    //     if (!transactions)
-    //         transactionsReload()
-    // }, [])
+    useEffect(() => {
+        title.set("История")
+    }, [])
 
     function resetTransactionsUpdateTimeout() {
         if (transactionsUpdateTimeout)
@@ -83,7 +84,7 @@ export default function HistoryPage(props) {
     return (
         <>
             <Row className="justify-content-start align-items-center px-3">
-                <Col xs="auto" className="p-0">
+                <Col xs="auto" className="ml-1">
                     <h4
                         className="font-bold m-0 unselectable"
                         style={{ lineHeight: "40px" }}>
@@ -99,16 +100,16 @@ export default function HistoryPage(props) {
                         onClick={() => transactionsReload()}><ArrowClockwise /></Button>
                 </Col>
 
-                    <NotShowFor user={auth.currUser} level={1}>
-                        <>
-                            <Col className="ml-4 my-2" xs="auto">
-                                <Switch text="показать все" value={transactionParamShowAll} onChange={(e) => { setTransactionParamShowAll(e); }} />
-                            </Col>
-                            <Col xs="auto">
-                                <IdField onChange={(val) => { setTransactionParamUserid((typeof val === "string") ? val : val.userid); }} value={transactionParamUserid} />
-                            </Col>
-                        </>
-                    </NotShowFor>
+                <NotShowFor user={auth.currUser} level={1}>
+                    <>
+                        <Col className="ml-4 my-2" xs="auto">
+                            <Switch text="показать все" value={transactionParamShowAll} onChange={(e) => { setTransactionParamShowAll(e); }} />
+                        </Col>
+                        <Col md="12" lg="auto">
+                            <IdField onChange={(val) => { setTransactionParamUserid((typeof val === "string") ? val : val.userid); }} value={transactionParamUserid} />
+                        </Col>
+                    </>
+                </NotShowFor>
             </Row>
             <GetContainer transactions={transactions} />
         </>

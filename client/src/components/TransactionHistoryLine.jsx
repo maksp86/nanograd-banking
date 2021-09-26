@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { CaretRightFill } from "react-bootstrap-icons";
+import { CaretRightFill, ClockFill } from "react-bootstrap-icons";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { generatePath, useHistory } from "react-router-dom";
@@ -26,37 +26,29 @@ export default function TransactionHistoryLine(props) {
     }
 
     return (
-        <div className="thl unselectable"
+        <div className={"thl unselectable align-items-center px-2" + (transaction.state == -1 ? " text-decoration-line-through" : "")}
             onClick={() => { history.push(generatePath("/history/:id", { id: props.info._id })) }}
         >
-            <Row className="align-items-center h-100 pl-2">
-                <Col xs={3} md={2} lg={2} xl={1} className="align-self-center">
-                    <p
-                        className="font-bold unselectable m-0 fs-5"
-                        style={
-                            {
-                                lineHeight: '30px',
-                                color: userAffected && (direction ? "#00AF54" : "#F08282")
-                            }
+            <div>
+                <p
+                    className="font-bold unselectable m-0 fs-5"
+                    style={
+                        {
+                            lineHeight: '30px',
+                            color: (userAffected) && (direction ? "#00AF54" : "#F08282")
                         }
-                    >
-                        {direction ? "+" : "-"}{transaction.amount}
-                    </p>
-                </Col>
-
-                <Col xs={7} md={9} lg={9} xl={10} className="align-self-center text-truncate fs-5 font-regular" style={{ lineHeight: '30px' }}>
-                    {/* <p
-                                className="font-regular m-0 fs-5 float-start  d-block"
-                                style={{ lineHeight: '30px' }}
-                            >
-                            </p> */}
-                    {transactionText}
-                </Col>
-
-                <Col xs={2} md={1} lg={1} xl={1} className="p-0">
-                    <CaretRightFill />
-                </Col>
-            </Row>
-        </div>
+                    }
+                >
+                    {userAffected ? (direction ? "+" : "-") : ""}{transaction.amount}
+                </p>
+            </div>
+            <div className="fs-5 font-regular" style={{ lineHeight: '30px' }}>
+                {transactionText}
+                {transaction.state == 0 && <ClockFill className="ml-1" opacity={0.5} />}
+            </div>
+            <div className="p-0">
+                <CaretRightFill />
+            </div>
+        </div >
     )
 }

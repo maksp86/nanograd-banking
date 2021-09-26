@@ -20,6 +20,8 @@ import { RequestContext } from '../context/RequestContext'
 import { generatePath, useHistory } from 'react-router-dom'
 import ClearableInput from '../components/ClearableInput'
 import DialogModal from '../components/DialogModal'
+import LoadingButton from '../components/LoadingButton'
+import { useTitle } from '../hooks/title.hook'
 
 export default function PaymentsPage(props) {
     const modal = useContext(ModalContext)
@@ -27,6 +29,7 @@ export default function PaymentsPage(props) {
     const auth = useContext(AuthContext)
     const history = useHistory()
     const validation = useValidation()
+    const title = useTitle()
 
     const [paySender, setPaySender] = useState("bank");
     const [payUserid, setPayUserid] = useState("");
@@ -34,6 +37,10 @@ export default function PaymentsPage(props) {
     const [payMessage, setPayMessage] = useState("");
     const [payToken, setPayToken] = useState("");
     const [payType, setPayType] = useState(2);
+
+    useEffect(() => {
+        title.set("Выплаты")
+    }, [])
 
     useEffect(() => {
         if (http.error) {
@@ -173,13 +180,14 @@ export default function PaymentsPage(props) {
 
             <Row className="justify-content-center">
                 <Col md={{ span: 4 }}>
-                    <Button
-                        disabled={http.loading}
+                    <LoadingButton
+                        loading={http.loading}
                         size='lg'
                         variant="outline-primary"
                         className="btn-block mt-2 fs-6"
                         onClick={() => makeTransaction()}
-                    >Совершить транзакцию</Button></Col>
+                    >Совершить транзакцию</LoadingButton>
+                </Col>
             </Row>
         </div >
     )

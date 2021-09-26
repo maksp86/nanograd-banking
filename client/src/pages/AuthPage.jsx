@@ -30,16 +30,21 @@ import ToggleSwitch from '../components/Switch'
 import PassView from '../components/AuthPage/PassView'
 import ScannerView from '../components/AuthPage/ScannerView'
 import Reader from '../components/Reader'
+import { useTitle } from '../hooks/title.hook'
 
 export default function AuthPage(props) {
-    document.body.style.backgroundColor = "#2D3142"
-    document.body.style.color = "black"
 
     const [clicks, setClicks] = useState(0);
     const [currPage, setCurrPage] = useState(null);
 
     const [scanned, setScanned] = useState(isDesktop)
     const [scannerResult, setScannerResult] = useState(null);
+
+    const [logined, setLogined] = useState(false)
+
+    const auth = useContext(AuthContext)
+    const http = useContext(RequestContext)
+    const title = useTitle()
 
     // useEffect(() => {
     //     console.log("scanned, scannerResult")
@@ -56,6 +61,29 @@ export default function AuthPage(props) {
     //         }
     //         />)
     // }, [scanned, scannerResult])
+
+    useEffect(() => {
+        async function func() {
+            try {
+                const data = await http.request('/api/user/get', 'POST', { userid: auth.lastid })
+                if (data) {
+                    if (data.user) {
+                        setScanned(true);
+                        setScannerResult(data.user)
+                        return
+                    }
+                }
+            }
+            catch (e) {
+
+            }
+        }
+        
+        if (auth.lastid)
+            func();
+
+        title.set("Вход")
+    }, [])
 
 
     function BackButton() {
@@ -74,13 +102,16 @@ export default function AuthPage(props) {
 
     return (
         <div>
-            <div className="vertical-center">
+            <div className={"vertical-center dark-back" + (logined ? " " + (isDesktop ? " logined-pc" : " logined-mobile") + " unclickable" : "")}>
                 <Container fluid="sm" style={{ width: '350px' }}>
 
                     <Row className="justify-content-center">
                         <Col xs="auto">
                             <div onClick={() => { setClicks(clicks + 1); }}>
                                 <Fade
+                                    when={!logined}
+                                    appear={true}
+                                    opposite
                                     bottom
                                     distance="5%">
                                     <Image className="mb-4 unselectable" style={{ minHeight: "100px", minWidth: "300px" }} src={(clicks === 6) ? hesoyam : logo} fluid />
@@ -98,6 +129,7 @@ export default function AuthPage(props) {
                                 left={!scanned}
                                 spy={scanned}
                                 exit={false}
+                                appear={true}
                                 distance="3%">
                                 <Container
                                     fluid="sm"
@@ -115,6 +147,14 @@ export default function AuthPage(props) {
                                         {scanned ?
                                             <PassView
                                                 user={scannerResult}
+                                                onLogin={
+                                                    (token, userid) => {
+                                                        setLogined(true)
+                                                        setTimeout(() => {
+                                                            auth.login(token, userid)
+                                                        }, 1000)
+                                                    }
+                                                }
                                             />
                                             :
                                             <ScannerView onResult={

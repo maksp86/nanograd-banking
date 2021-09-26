@@ -22,6 +22,7 @@ import { useValidation } from '../hooks/validation.hook'
 import { AuthContext } from '../context/AuthContext'
 import { RequestContext } from '../context/RequestContext'
 import { ModalContext } from '../context/ModalContext'
+import { useTitle } from '../hooks/title.hook'
 
 export default function AddUser(props) {
     const modal = useContext(ModalContext)
@@ -29,6 +30,7 @@ export default function AddUser(props) {
     const auth = useContext(AuthContext)
     const history = useHistory()
     const validation = useValidation()
+    const title = useTitle()
 
     const [name, setName] = useState("")
     const [surname, setSurname] = useState("")
@@ -43,6 +45,10 @@ export default function AddUser(props) {
     const [showAccesslevel, setShowAccesslevel] = useState(false)
 
     const divRef = useRef(null);
+
+    useEffect(() => {
+        title.set("Аккаунт")
+    }, [])
 
     const clearFields = () => {
         setName("")
@@ -173,7 +179,7 @@ export default function AddUser(props) {
                                 <Form.Select
                                     className="rounded-pill"
                                     value={accesslevel}
-                                    onChange={(e) => { console.log(parseInt(e.target.value)); setAccesslevel(parseInt(e.target.value))}}>
+                                    onChange={(e) => { console.log(parseInt(e.target.value)); setAccesslevel(parseInt(e.target.value)) }}>
                                     {
                                         Object.entries(accesslevelNames).map(([level, name]) => (<option key={level} value={level}>{name}</option>))
                                     }

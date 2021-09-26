@@ -2,6 +2,17 @@ import Button from "react-bootstrap/esm/Button";
 import Reader from "./Reader";
 
 export default function ScannerModal(props) {
+    function validator(data) {
+        try {
+            const parsed = JSON.parse(data);
+            if (parsed && parsed.userid) {
+                return parsed;
+            }
+        }
+        catch (e) { }
+        return null;
+    }
+
     return (
         <div className="mx-2" style={{ display: "flex", flexDirection: "column" }}>
             <h4 className="mx-auto my-2 unselectable">
@@ -15,14 +26,11 @@ export default function ScannerModal(props) {
 
                     onPreReaded={
                         (data) => {
-                            try {
-                                const parsed = JSON.parse(data);
-                                if (parsed && parsed.userid) {
-                                    props.onSuccessfulScan(parsed);
-                                    return true;
-                                }
+                            let val = (props.validator) ? props.validator(data) : validator(data);
+                            if (val) {
+                                props.onSuccessfulScan(val);
+                                return true;
                             }
-                            catch (e) { }
                             return false;
                         }
                     }

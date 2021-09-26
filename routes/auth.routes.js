@@ -45,8 +45,7 @@ router.post(
             res.status(200).json({ token, userid: findedUser.userid });
 
         } catch (error) {
-            res.status(500).json({ message: 'Какая-то ошибка. Попробуй еще раз.', errcod: 'some-err' })
-            console.log('ERR', error);
+            res.status(500).json({ message: 'Какая-то ошибка. Попробуйте еще раз.', errcod: 'some-err' })
         }
     });
 

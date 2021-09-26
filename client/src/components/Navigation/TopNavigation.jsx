@@ -1,14 +1,18 @@
 import React from 'react'
+import { isDesktop } from "react-device-detect";
 import Navbar from 'react-bootstrap/Navbar'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Button from 'react-bootstrap/Button'
+import nanogradLogo from '../../static/imgs/logo-white-yellow.svg'
+import Image from 'react-bootstrap/Image'
+import Fade from 'react-reveal/Fade'
 
 import { useHistory, useRouteMatch } from 'react-router'
 import { HouseDoor, ClockHistory, Wallet2, Person, Cash, Bank, People } from 'react-bootstrap-icons'
-import { ShowFor } from './ShowFor';
+import { ShowFor } from '../ShowFor';
 
 
-export default function BottomNavigation(props) {
+export default function TopNavigation(props) {
     const history = useHistory();
     const currUser = props.currUser;
 
@@ -25,11 +29,11 @@ export default function BottomNavigation(props) {
         return (
             <Button
                 variant="dark"
-                className={active && "button-active" + " " + props.className}
+                className={(active ? "button-active" : "") + " " + (props.className ? props.className : "")}
                 onClick={() => navigateTo(props.path)}
             >
                 <div className="selector-holder">
-                    {props.children}
+                    <h5 className="font-medium">{props.text}</h5>
                 </div>
             </Button>
         )
@@ -38,45 +42,59 @@ export default function BottomNavigation(props) {
         <Navbar
             bg="dark"
             variant="dark"
-            fixed="bottom"
+            fixed="top"
             className="p-0"
-            style={{ borderRadius: "35px 35px 0px 0px", height: "60px", overflowX: "auto", overflowY: "hidden" }}>
+            style={{ borderRadius: "0px 0px 30px 30px", height: "80px", overflowX: "auto", overflowY: "hidden" }}>
+            <ButtonGroup className="selectors-top">
+                <Button
+                    className="inactive big"
+                    variant="dark"
+                    onClick={() => navigateTo('/')}
+                >
+                    <Image src={nanogradLogo} style={{ maxHeight: "50px", maxWidth: "180px" }} />
+                </Button>
 
-            <ButtonGroup className="selectors">
                 <NavButton path="/" exact={true} text="Главная">
-                    <HouseDoor size={30} />
                 </NavButton>
 
                 <NavButton path="/history" compatiblePath={["/history", "/history/:payid"]} text="История">
-                    <ClockHistory size={30} />
                 </NavButton>
 
                 <NavButton path="/pay" text="Оплата">
-                    <Wallet2 size={30} />
                 </NavButton>
 
                 <ShowFor user={currUser} level={[2, 10]}>
                     <NavButton path="/shop" text="Касса">
-                        <Cash size={30} />
                     </NavButton>
                 </ShowFor>
 
                 <ShowFor user={currUser} level={[3, 10]}>
                     <NavButton path="/payments" text="Выплаты">
-                        <Bank size={30} />
                     </NavButton>
                 </ShowFor>
 
                 <ShowFor user={currUser} level={[4, 10]}>
-                    <NavButton path="/users" text="Пользователи">
-                        <People size={30} />
+                    <NavButton className="big" path="/users" text="Пользователи">
                     </NavButton>
                 </ShowFor>
 
-                <NavButton path="/account" text="Аккаунт">
-                    <Person size={30} />
-                </NavButton>
+                <Button
+                    variant="dark"
+                    className={"big" +
+                        (useRouteMatch({
+                            path: "/account"
+                        }) ? " button-active" : "")}
+                    onClick={() => navigateTo("/account")}
+                >
+                    <div
+                        className="selector-holder align-items-center justify-content-center"
+                        style={{ flexDirection: 'row' }}
+                    >
+                        <Person className="m-0 mr-3" size={35} />
+                        <h5 className="font-medium">{currUser && currUser.name}</h5>
+                    </div>
+                </Button>
             </ButtonGroup>
-        </Navbar >
+        </Navbar>
     )
 }

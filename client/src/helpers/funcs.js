@@ -24,4 +24,16 @@ const paymentTypes =
     31: "Возврат"
 }
 
-export { getTimeGreeting, accesslevelNames, paymentTypes }
+const paymentStates =
+{
+    '-1': "Отменен",
+    0: "Обработка",
+    1: "Успешно"
+}
+
+const pages =
+{
+
+}
+
+export { getTimeGreeting, accesslevelNames, paymentTypes, paymentStates }

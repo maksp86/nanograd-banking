@@ -20,6 +20,8 @@ import { RequestContext } from '../context/RequestContext'
 import { generatePath, useHistory } from 'react-router-dom'
 import ClearableInput from '../components/ClearableInput'
 import DialogModal from '../components/DialogModal'
+import LoadingButton from '../components/LoadingButton'
+import { useTitle } from '../hooks/title.hook'
 
 export default function ShopPage(props) {
     const modal = useContext(ModalContext)
@@ -27,6 +29,7 @@ export default function ShopPage(props) {
     const auth = useContext(AuthContext)
     const history = useHistory()
     const validation = useValidation()
+    const title = useTitle()
 
     const [paySender, setPaySender] = useState("shop");
     const [payUserid, setPayUserid] = useState("");
@@ -34,6 +37,10 @@ export default function ShopPage(props) {
     const [payMessage, setPayMessage] = useState("");
     const [payToken, setPayToken] = useState("");
     const [payType, setPayType] = useState(3);
+
+    useEffect(() => {
+        title.set("Касса")
+    }, [])
 
     useEffect(() => {
         if (http.error) {
@@ -123,16 +130,27 @@ export default function ShopPage(props) {
                         <IdField
                             placeholder={(payType === 3 ? "id покупателя" : "id получателя")}
                             value={payUserid}
+                            validator={
+                                (data) => {
+                                    try {
+                                        const parsed = JSON.parse(data);
+                                        if (parsed && parsed.userid && parsed.paytoken) {
+                                            return parsed;
+                                        }
+                                    }
+                                    catch (e) { }
+                                    return null;
+                                }
+                            }
                             onChange={
                                 (val) => {
                                     validation.unsetState('target');
-                                    if (typeof val === "string") {
-                                        setPayUserid(val)
-                                    }
-                                    else if (val.userid && val.paytoken) {
+                                    if (val.userid && val.paytoken) {
                                         setPayUserid(val.userid)
                                         setPayToken(val.paytoken)
                                     }
+                                    if (val == '')
+                                        setPayUserid('')
                                 }} />
                     </AddValidationMsg>
                 </Col>
@@ -162,13 +180,14 @@ export default function ShopPage(props) {
 
             <Row className="justify-content-center">
                 <Col md={{ span: 4 }}>
-                    <Button
-                        disabled={http.loading}
+                    <LoadingButton
+                        loading={http.loading}
                         size='lg'
                         variant="outline-primary"
                         className="btn-block mt-2 fs-6"
-                        onClick={() => { makeTransaction(); }}
-                    >Совершить транзакцию</Button></Col>
+                        onClick={() => makeTransaction()}
+                    >Совершить транзакцию</LoadingButton>
+                </Col>
             </Row>
         </div>
     )

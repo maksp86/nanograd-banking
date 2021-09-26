@@ -99,6 +99,26 @@ button span {
 .thl {
     max-height: 80px;
     height: 60px;
+    display: flex;
+    transition: background-color 200ms ease-in-out;
+}
+
+.thl>div {
+    margin: 5px;
+    padding: 5px;
+    flex: 0 1 auto;
+}
+
+.thl>div:first-child {
+    flex: 0 0 80px;
+}
+
+.thl>div:nth-child(2) {
+    flex: 1 0 150px;
+}
+
+.thl>div:nth-child(3) {
+    flex: 0 0 20px;
 }
 
 .thl:first-child {
@@ -120,4 +140,8 @@ button span {
 
 .thl:hover {
     background-color: #24273707 !important;
+}
+
+.thl:not(hover) {
+    background-color: initial;
 }
