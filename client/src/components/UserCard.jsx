@@ -14,7 +14,7 @@ import GetQR from '../components/GetQR'
 export default function UserCard(props) {
     if (props.user)
         return (
-            <Card onClick={(e) => { console.log(e); props.onClick(); }} style={{ width: props.width || '200px' }}>
+            <Card className={props.className} onClick={(e) => { console.log(e); props.onClick(); }} style={{ width: props.width || '200px' }}>
                 <Card.Body>
                     <Card.Title className="break-word">{props.user.surname} {props.user.name} {props.user.patronymic}</Card.Title>
 

@@ -7,26 +7,28 @@ import { X } from 'react-bootstrap-icons'
 
 
 export default function ClearableInput(props) {
+    var { value, placeholder, type, children, className, onChange, ...other } = props;
     return (
         <InputGroup
-            className={"m-0 " + props.className }>
+            className={"m-0 " + className}>
             <FormControl
-                value={props.value}
-                onChange={(e) => { props.onChange(props.type === "number" ? e.target.valueAsNumber : e.target.value) }}
-                placeholder={props.placeholder}
+                value={value}
+                onChange={(e) => { onChange(props.type === "number" ? e.target.valueAsNumber : e.target.value) }}
+                placeholder={placeholder}
                 className="unselectable"
-                aria-label={props.placeholder}
-                type={ props.type || "text" }
+                aria-label={placeholder}
+                type={type || "text"}
+                {...other}
             />
             <Button
                 variant="outline-primary"
                 onClick={() => {
-                    props.onChange("")
+                    onChange("")
                 }}
             >
                 <X size={20} />
             </Button>
-            {props.children}
+            {children}
         </InputGroup >
     )
 }

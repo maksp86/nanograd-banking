@@ -29,8 +29,6 @@ import Field from './Field'
 import PasswordField from './PasswordField'
 import LoadingButton from '../LoadingButton'
 
-
-
 export default function PassView(props) {
 
     const hasUser = props.user ? true : false;

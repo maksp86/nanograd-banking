@@ -1,12 +1,15 @@
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
-import { useContext, useEffect, useState } from "react";
+import domtoimage from 'dom-to-image'
+import React, { useContext, useEffect, useState } from "react";
+import ReactDOM from 'react-dom'
 import { RequestContext } from "../context/RequestContext";
 import { AuthContext } from "../context/AuthContext";
 import DialogModal from '../components/DialogModal'
 import PasswordChangeModal from '../components/PasswordChangeModal'
 import { ShowFor } from '../components/ShowFor';
+import UserCard from '../components/UserCard'
 
 import 'moment/locale/ru'
 
@@ -14,7 +17,7 @@ import { accesslevelNames } from "../helpers/funcs";
 import { ModalContext } from "../context/ModalContext";
 import ErrorModal from "../components/ErrorModal";
 import Spinner from "react-bootstrap/esm/Spinner";
-import { CaretLeftFill } from "react-bootstrap-icons";
+import { CaretLeftFill, Download } from "react-bootstrap-icons";
 import GetQR from "../components/GetQR";
 import { useTitle } from "../hooks/title.hook";
 
@@ -58,6 +61,36 @@ export default function UserDetailPage(props) {
             http.clearError()
         }
     }, [http.error])
+
+    async function downloadCard(user) {
+        var Card = React.createElement(UserCard, {
+            user,
+            showlevel: true,
+            qrsize: 180,
+            width: "254px",
+            actions: false
+        });
+
+        var portal = document.createElement('div')
+        portal.style.padding = "8px"
+        document.body.appendChild(portal);
+        ReactDOM.render(Card, portal)
+
+        domtoimage.toPng(portal,
+            {
+                bgcolor: "white",
+                width: 270,
+                height: 359
+            }
+        ).then((img) => {
+            var link = document.createElement('a');
+            link.download = user.userid + '-card.png';
+            link.href = img;
+            link.click();
+            document.body.removeChild(portal)
+        })
+
+    }
 
     async function deleteUser(userid) {
         try {
@@ -159,7 +192,17 @@ export default function UserDetailPage(props) {
 
                     <ShowFor user={auth.currUser} level={[4, 10]}>
                         {user.accesslevel != -1 && <Row className="justify-content-center">
-                            <Col md={6}>
+                            <Col md="auto">
+                                <Button
+                                    size='lg'
+                                    variant="outline-primary"
+                                    className="rounded-circle p-1 mt-4"
+                                    style={{ height: "48px", width: "48px" }}
+                                    onClick={() => downloadCard(user)}>
+                                    <Download />
+                                </Button>
+                            </Col>
+                            <Col md={4}>
                                 <Button
                                     size='lg'
                                     variant="outline-primary"

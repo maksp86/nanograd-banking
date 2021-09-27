@@ -67,7 +67,6 @@ export default function AddUser(props) {
                 if (data && data.user) {
                     setUserid(data.user.userid)
                     setPassword(data.user.password)
-                    // modal.show(<ErrorModal context={modal} error={{ message: data.message }} />)
                     modal.show(<DialogModal message={data.message} buttons={
                         [
                             { text: "закрыть", primary: false, action: () => { modal.close(); clearFields() } },

@@ -84,9 +84,17 @@ export default function UsersView(props) {
                             onClick={() => { usersReload() }}>
                             <ArrowClockwise />
                         </Button>
+
+                        <Button
+                            variant="outline-primary"
+                            className="rounded-circle p-1 mx-2"
+                            style={{ height: "34px", width: "34px" }}
+                            onClick={() => history.push('/users/add')}>
+                            <PersonPlus />
+                        </Button>
                     </Col>
 
-                    <Col xs="auto" className="mx-2 my-2 p-0">
+                    {/* <Col xs="auto" className="mx-2 my-2 p-0">
                         <Button
                             variant="outline-primary"
                             className="rounded-circle p-1"
@@ -94,9 +102,9 @@ export default function UsersView(props) {
                             onClick={() => history.push('/users/add')}>
                             <PersonPlus />
                         </Button>
-                    </Col>
+                    </Col> */}
 
-                    <Col md="4">
+                    <Col md="12" lg="6">
                         <ClearableInput placeholder="фильтр" value={searchFilter} onChange={(data) => setSearchFilter(data)} />
                     </Col>
 
