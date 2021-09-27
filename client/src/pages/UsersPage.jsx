@@ -56,13 +56,6 @@ export default function UsersView(props) {
             usersReload()
     }, [])
 
-    function resetUsersUpdateTimeout() {
-        if (usersUpdateTimeout)
-            clearTimeout(usersUpdateTimeout)
-
-        setUsersUpdateTimeout(setTimeout(usersReload, 1000))
-    }
-
     function UserList(props) {
         const [searchFilter, setSearchFilter] = useState("")
         return (

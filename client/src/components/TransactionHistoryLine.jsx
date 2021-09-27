@@ -1,7 +1,5 @@
 import { useContext } from "react";
 import { CaretRightFill, ClockFill } from "react-bootstrap-icons";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
 import { generatePath, useHistory } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
@@ -26,7 +24,7 @@ export default function TransactionHistoryLine(props) {
     }
 
     return (
-        <div className={"thl unselectable align-items-center px-2" + (transaction.state == -1 ? " text-decoration-line-through" : "")}
+        <div className={"thl unselectable align-items-center px-2" + (transaction.state === -1 ? " text-decoration-line-through" : "")}
             onClick={() => { history.push(generatePath("/history/:id", { id: props.info._id })) }}
         >
             <div>
@@ -44,7 +42,7 @@ export default function TransactionHistoryLine(props) {
             </div>
             <div className="fs-5 font-regular" style={{ lineHeight: '30px' }}>
                 {transactionText}
-                {transaction.state == 0 && <ClockFill className="ml-1" opacity={0.5} />}
+                {transaction.state === 0 && <ClockFill className="ml-1" opacity={0.5} />}
             </div>
             <div className="p-0">
                 <CaretRightFill />

@@ -1,14 +1,10 @@
-import React, { useContext, useState, useCallback, useEffect, useRef } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Image from 'react-bootstrap/Image'
 import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
-import FloatingLabel from 'react-bootstrap/FloatingLabel'
-import Spinner from 'react-bootstrap/Spinner'
-import { Switch, Route, Redirect } from 'react-router-dom'
 import { CaretLeftFill } from 'react-bootstrap-icons'
 import { isDesktop } from 'react-device-detect'
 import Fade from 'react-reveal/Fade'
@@ -18,24 +14,16 @@ import hesoyam from '../static/imgs/hesoyam.gif'
 
 import '../static/css/AuthPage.css'
 
-import { getTimeGreeting } from '../helpers/funcs'
-
-import { useHttp } from '../hooks/http.hook'
-import { useValidation } from '../hooks/validation.hook'
-
 import { RequestContext } from '../context/RequestContext'
 import { AuthContext } from '../context/AuthContext'
 
-import ToggleSwitch from '../components/Switch'
 import PassView from '../components/AuthPage/PassView'
 import ScannerView from '../components/AuthPage/ScannerView'
-import Reader from '../components/Reader'
 import { useTitle } from '../hooks/title.hook'
 
 export default function AuthPage(props) {
 
     const [clicks, setClicks] = useState(0);
-    const [currPage, setCurrPage] = useState(null);
 
     const [scanned, setScanned] = useState(isDesktop)
     const [scannerResult, setScannerResult] = useState(null);
@@ -45,22 +33,6 @@ export default function AuthPage(props) {
     const auth = useContext(AuthContext)
     const http = useContext(RequestContext)
     const title = useTitle()
-
-    // useEffect(() => {
-    //     console.log("scanned, scannerResult")
-    //     setCurrPage(scanned ?
-    //         <PassView
-    //             user={scannerResult}
-    //         />
-    //         :
-    //         <ScannerView onResult={
-    //             (e) => {
-    //                 setScanned(true);
-    //                 setScannerResult(e);
-    //             }
-    //         }
-    //         />)
-    // }, [scanned, scannerResult])
 
     useEffect(() => {
         async function func() {
@@ -78,7 +50,7 @@ export default function AuthPage(props) {
 
             }
         }
-        
+
         if (auth.lastid)
             func();
 

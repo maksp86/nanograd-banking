@@ -191,7 +191,7 @@ export default function UserDetailPage(props) {
                     </Row>
 
                     <ShowFor user={auth.currUser} level={[4, 10]}>
-                        {user.accesslevel != -1 && <Row className="justify-content-center">
+                        {user.accesslevel !== -1 && <Row className="justify-content-center">
                             <Col md="auto">
                                 <Button
                                     size='lg'

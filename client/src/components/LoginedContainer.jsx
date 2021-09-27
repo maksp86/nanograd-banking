@@ -1,8 +1,6 @@
 import React, { useContext, useEffect } from "react"
 
 import Container from 'react-bootstrap/Container'
-import Modal from 'react-bootstrap/Modal'
-
 import { Switch, Route, Redirect, useLocation } from 'react-router-dom'
 
 import { BrowserView, MobileView, isDesktop } from "react-device-detect";
@@ -12,9 +10,6 @@ import Fade from 'react-reveal/Fade'
 import BottomNavigation from "./Navigation/BottomNavigation"
 
 import '../static/css/CabinetPage.css'
-
-import { useHttp } from "../hooks/http.hook"
-import { useModal } from "../hooks/modal.hook"
 
 import { ModalContext } from '../context/ModalContext'
 import { RequestContext } from "../context/RequestContext"

@@ -31,9 +31,4 @@ const paymentStates =
     1: "Успешно"
 }
 
-const pages =
-{
-
-}
-
 export { getTimeGreeting, accesslevelNames, paymentTypes, paymentStates }

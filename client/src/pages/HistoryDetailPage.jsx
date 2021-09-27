@@ -154,7 +154,7 @@ export default function HistoryDetailPage(props) {
 
                     <Row className="justify-content-center">
                         <Col>
-                            <h5 className={"font-normal" + (currTransaction.state == -1 ? " text-decoration-line-through" : "")}>
+                            <h5 className={"font-normal" + (currTransaction.state === -1 ? " text-decoration-line-through" : "")}>
                                 <span className="unselectable">Проведена </span>
                                 <span className="font-regular">
                                     <Moment format="D MMMM в hh:mm" locale="ru" date={currTransaction.date} local />
@@ -193,7 +193,7 @@ export default function HistoryDetailPage(props) {
                         </Col>
                     </Row>)}
 
-                    {currTransaction.state != -1 &&
+                    {currTransaction.state !== -1 &&
                         < NotShowFor user={auth.currUser} level={1}>
                             <Row>
                                 <Col>

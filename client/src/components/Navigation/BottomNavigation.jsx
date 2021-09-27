@@ -25,7 +25,7 @@ export default function BottomNavigation(props) {
         return (
             <Button
                 variant="dark"
-                className={active && "button-active" + " " + props.className}
+                className={(active ? "button-active " : "") + props.className}
                 onClick={() => navigateTo(props.path)}
             >
                 <div className="selector-holder">

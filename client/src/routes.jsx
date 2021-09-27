@@ -1,5 +1,4 @@
-import React, { useEffect } from "react"
-import { Switch, Route } from 'react-router-dom'
+import React from "react"
 import Modal from 'react-bootstrap/Modal'
 
 import './static/css/CabinetPage.css'

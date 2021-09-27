@@ -3,10 +3,11 @@ import React from 'react'
 import { BrowserRouter } from 'react-router-dom';
 import { UseRoutes } from './routes';
 
-import './App.scss';
 import { useAuth } from './hooks/auth.hook';
 import { AuthContext } from './context/AuthContext';
 import { useConstructor } from './hooks/constructor.hook';
+
+import './App.scss';
 
 function App() {
   const auth = useAuth()

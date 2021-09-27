@@ -7,7 +7,7 @@ import App from './App';
 import './static/css/bootstrap.min.css'
 import './index.css';
 
-console.log("//  made by:\n//\n//  ███    ███  █████  ██   ██ ███████ ██████   █████   ██████\n//  ████  ████ ██   ██ ██  ██  ██      ██   ██ ██   ██ ██\n//  ██ ████ ██ ███████ █████   ███████ ██████   █████  ███████\n//  ██  ██  ██ ██   ██ ██  ██       ██ ██      ██   ██ ██    ██\n//  ██      ██ ██   ██ ██   ██ ███████ ██       █████   ██████\n//\n//\n//  What do you searching here?\n//  ur alone? come here my little pogchamp <3")
+// console.log("//  made by:\n//\n//  ███    ███  █████  ██   ██ ███████ ██████   █████   ██████\n//  ████  ████ ██   ██ ██  ██  ██      ██   ██ ██   ██ ██\n//  ██ ████ ██ ███████ █████   ███████ ██████   █████  ███████\n//  ██  ██  ██ ██   ██ ██  ██       ██ ██      ██   ██ ██    ██\n//  ██      ██ ██   ██ ██   ██ ███████ ██       █████   ██████\n//\n//\n//  What do you searching here?\n//  ur alone? come here my little pogchamp <3")
 ReactDOM.render(
   <React.StrictMode>
     <App />

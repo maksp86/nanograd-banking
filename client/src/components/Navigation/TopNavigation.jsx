@@ -1,14 +1,12 @@
 import React from 'react'
-import { isDesktop } from "react-device-detect";
 import Navbar from 'react-bootstrap/Navbar'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Button from 'react-bootstrap/Button'
 import nanogradLogo from '../../static/imgs/logo-white-yellow.svg'
 import Image from 'react-bootstrap/Image'
-import Fade from 'react-reveal/Fade'
 
 import { useHistory, useRouteMatch } from 'react-router'
-import { HouseDoor, ClockHistory, Wallet2, Person, Cash, Bank, People } from 'react-bootstrap-icons'
+import { Person } from 'react-bootstrap-icons'
 import { ShowFor } from '../ShowFor';
 
 
