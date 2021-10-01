@@ -4,6 +4,7 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Image from 'react-bootstrap/Image'
+import Spinner from 'react-bootstrap/Spinner'
 import Button from 'react-bootstrap/Button'
 import { CaretLeftFill } from 'react-bootstrap-icons'
 import { isDesktop } from 'react-device-detect'
@@ -137,6 +138,7 @@ export default function AuthPage(props) {
                                                 }
                                             }
                                             />}
+                                        {/* <GetView /> */}
                                     </div>
                                 </Container>
                             </Fade>

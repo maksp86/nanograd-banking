@@ -25,14 +25,14 @@ export default function HomePage(props) {
     return (
         <>
             <Row className="align-items-center">
-                <Col xs="auto">
+                <Col md="6" lg="4">
                     <div>
                         <h2 className="font-medium mt-4 mb-2 mx-2 unselectable" >{getTimeGreeting()},</h2>
-                        <h2 className="font-regular mt-2 mb-3 mx-2 unselectable">{currUser.name}</h2>
+                        <h2 className="font-regular mt-2 mb-3 mx-2">{currUser.name}</h2>
                     </div>
                 </Col>
 
-                <Col md="auto">
+                <Col md="6" lg="5">
                     <h3 className="mx-2 font-light my-0">
                         <span className="unselectable">баланс: </span>
                         {currUser.balance}
@@ -40,7 +40,7 @@ export default function HomePage(props) {
                     </h3>
                 </Col>
 
-                <Col>
+                <Col md="12" lg="3">
                     <div
                         style={{ width: 'fit-content', margin: '0 auto' }}
                     >

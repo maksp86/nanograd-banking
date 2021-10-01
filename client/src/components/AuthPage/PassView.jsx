@@ -11,13 +11,19 @@ import PasswordField from './PasswordField'
 import LoadingButton from '../LoadingButton'
 
 export default function PassView(props) {
-
-    const hasUser = props.user ? true : false;
-    const [userid, setUserid] = useState(hasUser ? props.user.userid : "")
+    const [hasUser, setHasUser] = useState(false)
+    const [userid, setUserid] = useState("")
     const [password, setPassword] = useState("")
     const validation = useValidation();
 
     const http = useContext(RequestContext)
+
+    useEffect(() => {
+        if (props.user) {
+            setHasUser(true);
+            setUserid(props.user.userid)
+        }
+    }, [props.user])
 
     useEffect(() => {
         if (http.error) {
@@ -28,10 +34,15 @@ export default function PassView(props) {
         }
     }, [http.error, http.clearError])
 
+    useEffect(() => {
+        console.log(validation.states)
+    }, [validation.states])
+
     const handleLogin = async () => {
         try {
             const data = await http.request('/api/auth/login', 'POST', { userid, password })
-            props.onLogin(data.token, data.userid)
+            if (data)
+                props.onLogin(data.token, data.userid)
         } catch (e) { }
     }
 
@@ -76,7 +87,11 @@ export default function PassView(props) {
 
             <PasswordField
                 value={password}
-                onChange={(e) => { setPassword(e); validation.unsetState("password") }}
+                onChange={(e) => {
+                    setPassword(e);
+                    validation.unsetState("password")
+                }
+                }
                 onKeyPress={onKeyPressed}
                 disabled={http.loading}
                 validation={validation.states["password"]}
